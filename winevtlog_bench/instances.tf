@@ -16,7 +16,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_key_pair" "fluentd" {
   key_name   = "fluentd"
-  public_key = file("../azure_key/id_rsa_azure.pub")
+  public_key = file("../aws_key/id_rsa_aws.pub")
 }
 
 resource "aws_instance" "aggregator" {

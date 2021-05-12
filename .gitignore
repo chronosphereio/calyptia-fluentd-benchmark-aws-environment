@@ -1,7 +1,7 @@
 env.sh
 *.tfvars
 .terraform
-/azure_key/*.pub
+/aws_key/*.pub
 /winevtlog_bench/ansible/hosts
 /winevtlog_bench/ansible/output/
 /in_tail_bench/ansible/hosts
