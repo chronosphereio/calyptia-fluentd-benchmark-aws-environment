@@ -23,7 +23,7 @@ aggregator-provision:
 local-package-provision:
 	@if [ "$(FLUENTD_LOCAL_PACKAGE)" = "" ]; then \
 		echo "Set FLUENTD_LOCAL_PACKAGE to use modified version of installer"; \
-		echo "e.g. export FLUENTD_LOCAL_PACKAGE=./config/td-agent-4.0.50-x64.msi"; \
+		echo "e.g. export FLUENTD_LOCAL_PACKAGE=./config/calyptia-fluentd-1.0.50-x64.msi"; \
 		exit 1; \
 	fi
 	ansible-playbook -i ./ansible/hosts ./ansible/windows.yml --extra-vars "local_package=$(FLUENTD_LOCAL_PACKAGE)"

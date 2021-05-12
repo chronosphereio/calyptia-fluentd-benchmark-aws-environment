@@ -1,35 +1,35 @@
 ---
 - hosts: aggregator
   vars:
-    td_agent_version: "4.1.0-1"
+    calyptia_fluentd_version: "1.0.0-1"
   tasks:
-    - name: Check if td-agent is installed
-      command: dpkg-query -W td-agent
-      register: td_agent_check_deb
-      failed_when: td_agent_check_deb.rc > 1
-      changed_when: td_agent_check_deb.rc == 1
-    - name: Download td-agent
+    - name: Check if calyptia-fluentd is installed
+      command: dpkg-query -W calyptia-fluentd
+      register: calyptia_fluentd_check_deb
+      failed_when: calyptia_fluentd_check_deb.rc > 1
+      changed_when: calyptia_fluentd_check_deb.rc == 1
+    - name: Download calyptia-fluentd
       get_url:
-        url="http://packages.treasuredata.com.s3.amazonaws.com/4/ubuntu/focal/pool/contrib/t/td-agent/td-agent_{{ td_agent_version }}_amd64.deb"
-        dest="/home/{{ ansible_env.USER }}/td-agent_{{ td_agent_version }}_amd64.deb"
-      when: td_agent_check_deb.rc == 1
-    - name: Install python-apt
+        url="https://calyptia-fluentd.s3.us-east-2.amazonaws.com/1/ubuntu/focal/pool/universe/c/calyptia-fluentd/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb"
+        dest="/home/{{ ansible_env.USER }}/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb"
+      when: calyptia_fluentd_check_deb.rc == 1
+    - name: Install python3-apt
       become: true
       apt:
-        name: python-apt
-    - name: Install td-agent
+        name: python3-apt
+    - name: Install calyptia-fluentd
       become: true
       apt:
-        deb: /home/{{ ansible_env.USER }}/td-agent_{{ td_agent_version }}_amd64.deb
-      when: td_agent_check_deb.rc == 1
+        deb: /home/{{ ansible_env.USER }}/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb
+      when: calyptia_fluentd_check_deb.rc == 1
     - name: Copy aggregator configuration
       become: true
       copy:
         src: ./config/fluent-aggregator.conf
-        dest: /etc/td-agent/td-agent.conf
-    - name: Make sure a td-agent service is restarted
+        dest: /etc/calyptia-fluentd/calyptia-fluentd.conf
+    - name: Make sure a calyptia-fluentd service is restarted
       become: true
       systemd:
         state: restarted
         daemon_reload: yes
-        name: td-agent
+        name: calyptia-fluentd
