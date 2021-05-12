@@ -1,32 +1,21 @@
-Fluentd Benchmark Azure Environment with Terraform
+Calyptia Fluentd Benchmark AWS Environment with Terraform
 ===
 
-[![Build Status](https://travis-ci.com/fluent-plugins-nursery/fluentd-benchmark-azure-environment.svg?branch=master)](https://travis-ci.com/fluent-plugins-nursery/fluentd-benchmark-azure-environment)
+[![Lint terraform and ansible recipe on Ubuntu](https://github.com/calyptia/calyptia-fluentd-benchmark-aws-environment/actions/workflows/terraform-lint.yml/badge.svg?branch=calyptia-bench)](https://github.com/calyptia/calyptia-fluentd-benchmark-aws-environment/actions/workflows/terraform-lint.yml)
 
 ## Prerequisites
 
-* Terraform 0.12+
+* Terraform 0.13+
 * Python3 3.6+
-* Ansible 2.9+
+* Ansible 3.0+
 * make
+* AWS access key which can manage EC2 instances
 
 ## Setup
 
  1. Prepare RSA public key and put it into `azure_key/id_rsa_azure.pub`.
- 2. Prepare env.sh and fill `ARM_` prefixed environment variables with your credentials.
- 3. Run `env.sh`
- 4. Change directory to target environments(winevtlog_bench/in_tail_bench).
- 5. Specify user-defined variables in `terraform.tfvars` which can be copied from `terraform.tfvars.sample` and fill them for each environment (winevtlog\_bench, in\_tail\_bench).
-
-
-### Note about env.sh configuration
-
-* `ARM_SUBSCRIPTION_ID` - You can get by `az account list` if you already logged in.
-* `ARM_TENANT_ID` - You can get by `az account list` if you already logged in.
-* `ARM_CLIENT_ID` - You can get by creating service principal.
-* `ARM_CLIENT_SECRET` - You can get by creating service principal.
-
-You can create service principal by `az ad sp create-for-rbac --name FOOBAR` or something. You need to logged in as user account in beforehand.
+ 2. Change directory to target environments(winevtlog_bench/in_tail_bench).
+ 3. Specify user-defined variables in `terraform.tfvars` which can be copied from `terraform.tfvars.sample` and fill them for each environment (winevtlog\_bench, in\_tail\_bench).
 
 ## Usage
 
