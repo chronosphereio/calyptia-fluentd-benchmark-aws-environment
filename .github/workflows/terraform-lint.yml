@@ -24,7 +24,7 @@ jobs:
       - name: Install ansible
         run: sudo apt install -y ansible ansible-lint
       - name: Copy public key
-        run: cp -f ./tests/id_ecdsa_dummy_key.pub ./azure_key/id_rsa_azure.pub
+        run: cp -f ./tests/id_ecdsa_dummy_key.pub ./aws_key/id_rsa_aws.pub
       - name: Validate terraform
         run: cd ${{ matrix.bench }} && cp -f terraform.tfvars.sample terraform.tfvars && terraform init && terraform validate
       - name: Validate ansible ${{ matrix.bench }}
