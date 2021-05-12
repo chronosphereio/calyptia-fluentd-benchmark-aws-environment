@@ -3,6 +3,7 @@
   vars:
     calyptia_fluentd_version: "1.0.0"
     eventlog_bencher_version: "v0.4.1.0"
+    calyptia_fluentd_repo: "calyptia-fluentd.s3.us-east-2.amazonaws.com/1/windows"
   tasks:
     - name: Copy local modified version for testing
       win_copy:
@@ -16,7 +17,7 @@
       when: local_package != "no"
     - name: Install calyptia-fluentd
       win_package:
-        path="https://calyptia-fluentd.s3.us-east-2.amazonaws.com/1/windows/calyptia-fluentd-{{ calyptia_fluentd_version }}-x64.msi"
+        path="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd-{{ calyptia_fluentd_version }}-x64.msi"
         Product_Id="89641f88-2289-42ff-aed0-e7b6ae6c0fe2"
         arguments="/q"
       when: local_package == "no"

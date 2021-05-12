@@ -2,6 +2,7 @@
 - hosts: aggregator
   vars:
     calyptia_fluentd_version: "1.0.0-1"
+    calyptia_fluentd_repo: "calyptia-fluentd.s3.us-east-2.amazonaws.com/1/ubuntu/focal/pool/universe/c/calyptia-fluentd"
   tasks:
     - name: Check if calyptia-fluentd is installed
       command: dpkg-query -W calyptia-fluentd
@@ -10,7 +11,7 @@
       changed_when: calyptia_fluentd_check_deb.rc == 1
     - name: Download calyptia-fluentd
       get_url:
-        url="https://calyptia-fluentd.s3.us-east-2.amazonaws.com/1/ubuntu/focal/pool/universe/c/calyptia-fluentd/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb"
+        url="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb"
         dest="/home/{{ ansible_env.USER }}/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb"
       when: calyptia_fluentd_check_deb.rc == 1
     - name: Install python3-apt
