@@ -15,9 +15,9 @@ output "aggregator_public_ip_address" {
 }
 
 resource "local_file" "inventory" {
-  filename = "ansible/hosts"
+  filename        = "ansible/hosts"
   file_permission = "0644"
-  content  = <<EOL
+  content         = <<EOL
 [windows]
 ${data.aws_eip.collector.public_ip}
 

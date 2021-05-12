@@ -20,16 +20,16 @@ resource "aws_key_pair" "fluentd" {
 }
 
 resource "aws_instance" "aggregator" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.medium"
-  subnet_id = "${aws_subnet.public.id}"
-  private_ip = "10.0.2.4"
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = "t2.medium"
+  subnet_id                   = aws_subnet.public.id
+  private_ip                  = "10.0.2.4"
   associate_public_ip_address = true
   security_groups = [
     aws_security_group.aggregator_sg.id
   ]
-  key_name      = aws_key_pair.fluentd.id
-  availability_zone = "${var.availability-zone}"
+  key_name          = aws_key_pair.fluentd.id
+  availability_zone = var.availability-zone
 
   depends_on = [aws_internet_gateway.gw]
 
@@ -52,25 +52,25 @@ data "aws_ami" "winserv2019" {
 }
 
 resource "aws_instance" "winserv-2019collector" {
-  ami           = data.aws_ami.winserv2019.id
-  instance_type = "t2.medium"
-  subnet_id = "${aws_subnet.public.id}"
-  private_ip = "10.0.2.5"
+  ami                         = data.aws_ami.winserv2019.id
+  instance_type               = "t2.medium"
+  subnet_id                   = aws_subnet.public.id
+  private_ip                  = "10.0.2.5"
   associate_public_ip_address = true
   security_groups = [
     aws_security_group.allow_rdp.id
   ]
-  key_name      = aws_key_pair.fluentd.id
-  availability_zone = "${var.availability-zone}"
+  key_name          = aws_key_pair.fluentd.id
+  availability_zone = var.availability-zone
 
   depends_on = [aws_internet_gateway.gw]
 
   connection {
     type     = "winrm"
     user     = "Administrator"
-    password = "${var.windows-adminpassword}"
+    password = var.windows-adminpassword
     # set from default of 5m to 10m to avoid winrm timeout
-    timeout  = "10m"
+    timeout = "10m"
   }
 
   user_data = <<EOF
@@ -86,6 +86,6 @@ EOF
   tags = {
     CreatedBy = "Terraform"
     Purpose   = "Collect Windows EventLog Benchmark"
-    Name = "benchmarking on collector"
+    Name      = "benchmarking on collector"
   }
 }
