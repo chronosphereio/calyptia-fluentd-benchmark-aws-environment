@@ -1,111 +1,91 @@
-resource "azurerm_virtual_machine" "aggregator" {
-  name                  = "${var.prefix}-aggregator-vm"
-  location              = azurerm_resource_group.fluentd.location
-  resource_group_name   = azurerm_resource_group.fluentd.name
-  network_interface_ids = [azurerm_network_interface.aggregator.id]
-  vm_size               = "Standard_B2S"
+data "aws_ami" "ubuntu" {
+  most_recent = true
 
-  # Uncomment this line to delete the OS disk automatically when deleting the VM
-  delete_os_disk_on_termination = true
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
 
-  # Uncomment this line to delete the data disks automatically when deleting the VM
-  delete_data_disks_on_termination = true
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 
-  storage_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts-gen2"
-    version   = "latest"
-  }
-  storage_os_disk {
-    name              = "aggregator-disk1"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  os_profile {
-    computer_name  = "${var.prefix}-ubuntu"
-    admin_username = var.linux-username
-    admin_password = var.linux-password
-  }
-  os_profile_linux_config {
-    disable_password_authentication = true
+  owners = ["099720109477"] # Canonical
+}
 
-    ssh_keys {
-      path     = "/home/${var.linux-username}/.ssh/authorized_keys"
-      key_data = file("../azure_key/id_rsa_azure.pub")
-    }
-  }
+resource "aws_key_pair" "fluentd" {
+  key_name   = "fluentd"
+  public_key = file("../azure_key/id_rsa_azure.pub")
+}
+
+resource "aws_instance" "aggregator" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.medium"
+  subnet_id = "${aws_subnet.public.id}"
+  private_ip = "10.0.2.4"
+  associate_public_ip_address = true
+  security_groups = [
+    aws_security_group.aggregator_sg.id
+  ]
+  key_name      = aws_key_pair.fluentd.id
+  availability_zone = "${var.availability-zone}"
+
+  depends_on = [aws_internet_gateway.gw]
+
   tags = {
-    environment = "benchmarking"
+    Name = "benchmarking on aggregator"
   }
 }
 
-resource "azurerm_virtual_machine" "winserver-2019collector" {
-  name                             = "${var.prefix}-collector-winserver-2019-vm"
-  location                         = azurerm_resource_group.fluentd.location
-  resource_group_name              = azurerm_resource_group.fluentd.name
-  network_interface_ids            = [azurerm_network_interface.collector.id]
-  vm_size                          = "Standard_B2S"
-  delete_os_disk_on_termination    = true
-  delete_data_disks_on_termination = true
-
-  storage_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2019-Datacenter"
-    version   = "latest"
+data "aws_ami" "winserv2019" {
+  most_recent = true
+  filter {
+    name   = "name"
+    values = ["Windows_Server-2019-English-Full-Base-*"]
   }
-
-  storage_os_disk {
-    name              = "2019-datacenter-disk1"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-    os_type           = "Windows"
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
+  owners = ["801119661308"] # Canonical
+}
 
-  os_profile {
-    computer_name  = "${var.prefix}-winserv"
-    admin_username = var.windows-username
-    admin_password = var.windows-password
-    custom_data    = file("./config/settings.ps1")
-  }
+resource "aws_instance" "winserv-2019collector" {
+  ami           = data.aws_ami.winserv2019.id
+  instance_type = "t2.medium"
+  subnet_id = "${aws_subnet.public.id}"
+  private_ip = "10.0.2.5"
+  associate_public_ip_address = true
+  security_groups = [
+    aws_security_group.allow_rdp.id
+  ]
+  key_name      = aws_key_pair.fluentd.id
+  availability_zone = "${var.availability-zone}"
 
-  os_profile_windows_config {
-    enable_automatic_upgrades = true
-    provision_vm_agent        = true
-    winrm {
-      protocol = "http"
-    }
-    # Auto-Login's required to configure WinRM
-    additional_unattend_config {
-      pass         = "oobeSystem"
-      component    = "Microsoft-Windows-Shell-Setup"
-      setting_name = "AutoLogon"
-      content      = "<AutoLogon><Password><Value>${var.windows-password}</Value></Password><Enabled>true</Enabled><LogonCount>1</LogonCount><Username>${var.windows-username}</Username></AutoLogon>"
-    }
-    # Unattend config is to enable basic auth in WinRM, required for the provisioner stage.
-    additional_unattend_config {
-      pass         = "oobeSystem"
-      component    = "Microsoft-Windows-Shell-Setup"
-      setting_name = "FirstLogonCommands"
-      content      = file("./config/FirstLogonCommands.xml")
-    }
-  }
-
-  tags = {
-    CreatedBy = var.windows-username
-    Purpose   = "Collect Windows EventLog Benchmark"
-  }
+  depends_on = [aws_internet_gateway.gw]
 
   connection {
-    host     = azurerm_public_ip.collector.ip_address
     type     = "winrm"
-    port     = 5985
-    https    = false
-    timeout  = "2m"
-    user     = var.windows-username
-    password = var.windows-password
+    user     = "Administrator"
+    password = "${var.windows-adminpassword}"
+    # set from default of 5m to 10m to avoid winrm timeout
+    timeout  = "10m"
+  }
+
+  user_data = <<EOF
+<powershell>
+  Invoke-WebRequest -Uri https://raw.githubusercontent.com/ansible/ansible/devel/examples/scripts/ConfigureRemotingForAnsible.ps1 -OutFile ConfigureRemotingForAnsible.ps1
+  powershell -ExecutionPolicy RemoteSigned .\ConfigureRemotingForAnsible.ps1
+  # Set Administrator password for RDP
+  $admin = [ADSI]("WinNT://./administrator, user")
+  $admin.SetPassword("${var.windows-adminpassword}")
+</powershell>
+EOF
+
+  tags = {
+    CreatedBy = "Terraform"
+    Purpose   = "Collect Windows EventLog Benchmark"
+    Name = "benchmarking on collector"
   }
 }
