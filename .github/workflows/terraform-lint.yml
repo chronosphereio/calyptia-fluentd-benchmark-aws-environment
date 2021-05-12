@@ -8,7 +8,7 @@ jobs:
     name: Lint ${{ matrix.bench }}
     runs-on: ${{ matrix.os }}
     env:
-      tf_version: 0.12.18
+      tf_version: 0.15.1
     strategy:
       fail-fast: false
       matrix:
