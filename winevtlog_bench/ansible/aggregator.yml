@@ -28,6 +28,7 @@
       copy:
         src: ./config/fluent-aggregator.conf
         dest: /etc/calyptia-fluentd/calyptia-fluentd.conf
+        mode: '0644'
     - name: Make sure a calyptia-fluentd service is restarted
       become: true
       systemd:
