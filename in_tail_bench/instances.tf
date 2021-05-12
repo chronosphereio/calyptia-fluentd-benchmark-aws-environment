@@ -33,7 +33,7 @@ resource "azurerm_virtual_machine" "linux-aggregator" {
 
     ssh_keys {
       path     = "/home/${var.aggregator-username}/.ssh/authorized_keys"
-      key_data = file("../azure_key/id_rsa_azure.pub")
+      key_data = file("../aws_key/id_rsa_aws.pub")
     }
   }
   tags = {
@@ -72,7 +72,7 @@ resource "azurerm_virtual_machine" "linux-collector" {
 
     ssh_keys {
       path     = "/home/${var.collector-username}/.ssh/authorized_keys"
-      key_data = file("../azure_key/id_rsa_azure.pub")
+      key_data = file("../aws_key/id_rsa_aws.pub")
     }
   }
   tags = {
