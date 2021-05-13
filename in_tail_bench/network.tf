@@ -1,66 +1,89 @@
-# Create a virtual network in the production-resources resource group
-resource "azurerm_virtual_network" "tailing" {
-  name                = "${var.prefix}-tailing-network"
-  resource_group_name = azurerm_resource_group.fluentd-tail.name
-  location            = azurerm_resource_group.fluentd-tail.location
-  address_space       = ["10.1.0.0/16"]
+# Create a VPC
+resource "aws_vpc" "fluentd" {
+  cidr_block           = "10.1.0.0/16"
+  enable_dns_hostnames = true
+  enable_dns_support   = true
 }
 
-resource "azurerm_subnet" "tail-internal" {
-  name                 = "tail-internal"
-  resource_group_name  = azurerm_resource_group.fluentd-tail.name
-  virtual_network_name = azurerm_virtual_network.tailing.name
-  address_prefix       = "10.1.3.0/24"
-}
-
-resource "azurerm_public_ip" "linux-aggregator" {
-  name                    = "${var.prefix}-aggregator-pip"
-  location                = azurerm_resource_group.fluentd-tail.location
-  resource_group_name     = azurerm_resource_group.fluentd-tail.name
-  allocation_method       = "Dynamic"
-  idle_timeout_in_minutes = 30
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.fluentd.id
 
   tags = {
-    environment = "${var.prefix}-tail-aggregator-pip"
+    Name = "Internet Gateway by Terraform"
   }
 }
 
-resource "azurerm_network_interface" "linux-aggregator" {
-  name                = "${var.prefix}-aggregator-nic"
-  location            = azurerm_resource_group.fluentd-tail.location
-  resource_group_name = azurerm_resource_group.fluentd-tail.name
+resource "aws_route_table" "r" {
+  vpc_id = aws_vpc.fluentd.id
 
-  ip_configuration {
-    name                          = "tail-aggregator-nic"
-    subnet_id                     = azurerm_subnet.tail-internal.id
-    private_ip_address_allocation = "Static"
-    private_ip_address            = "10.1.3.4"
-    public_ip_address_id          = azurerm_public_ip.linux-aggregator.id
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
   }
-}
-
-resource "azurerm_public_ip" "linux-collector" {
-  name                    = "${var.prefix}-collector-pip"
-  location                = azurerm_resource_group.fluentd-tail.location
-  resource_group_name     = azurerm_resource_group.fluentd-tail.name
-  allocation_method       = "Dynamic"
-  idle_timeout_in_minutes = 30
 
   tags = {
-    environment = "${var.prefix}-collector-pip"
+    Name = "Public route table by Terraform"
   }
 }
 
-resource "azurerm_network_interface" "linux-collector" {
-  name                = "${var.prefix}-collector-nic"
-  location            = azurerm_resource_group.fluentd-tail.location
-  resource_group_name = azurerm_resource_group.fluentd-tail.name
+resource "aws_subnet" "public" {
+  vpc_id            = aws_vpc.fluentd.id
+  cidr_block        = "10.1.3.0/24"
+  availability_zone = var.availability-zone
 
-  ip_configuration {
-    name                          = "collector-nic"
-    subnet_id                     = azurerm_subnet.tail-internal.id
-    private_ip_address_allocation = "Static"
-    private_ip_address            = "10.1.3.5"
-    public_ip_address_id          = azurerm_public_ip.linux-collector.id
+  tags = {
+    Name = "Public Subnet by Terraform"
   }
+}
+
+resource "aws_route_table_association" "a" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.r.id
+}
+
+resource "aws_security_group" "sg" {
+  name        = "Linux sg"
+  description = "Allow ssh/icmp inbound traffic"
+  vpc_id      = aws_vpc.fluentd.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    environment = "Created with Terraform"
+  }
+}
+
+resource "aws_eip" "aggregator" {
+  vpc                       = true
+  associate_with_private_ip = "10.1.3.4"
+  instance                  = aws_instance.aggregator.id
+
+  depends_on = [aws_internet_gateway.gw]
+}
+
+resource "aws_eip" "collector" {
+  vpc                       = true
+  associate_with_private_ip = "10.1.3.5"
+  instance                  = aws_instance.collector.id
+
+  depends_on = [aws_internet_gateway.gw]
 }
