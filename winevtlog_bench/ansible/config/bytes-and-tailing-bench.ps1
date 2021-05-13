@@ -6,12 +6,12 @@ Param(
     [parameter(mandatory=$true)][int32]$LineRate
  )
 
-$ENV:PATH="C:\opt\td-agent\embedded\bin;" + $ENV:PATH
-$ENV:PATH="C:\opt\td-agent\bin;" + $ENV:PATH
+$ENV:PATH="C:\opt\calyptia-fluentd\embedded\bin;" + $ENV:PATH
+$ENV:PATH="C:\opt\calyptia-fluentd\bin;" + $ENV:PATH
 
 cd $workdir
 
-Start-Process fluentd -ArgumentList "-c", "C:\opt\td-agent\fluent-collector-with-tailing.conf", "-o", "C:\opt\td-agent\message-$BatchSize-events-and-$LineRate-lines.log" -NoNewWindow -PassThru
+Start-Process fluentd -ArgumentList "-c", "C:\opt\calyptia-fluentd\fluent-collector-with-tailing.conf", "-o", "C:\opt\calyptia-fluentd\message-$BatchSize-events-and-$LineRate-lines.log" -NoNewWindow -PassThru
 
 while ($true) {
     $count = (Get-Process -Name ruby -ErrorAction SilentlyContinue).Count
