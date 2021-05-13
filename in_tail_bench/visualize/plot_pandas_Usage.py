@@ -19,7 +19,7 @@ parser.add_argument('--resource',
 args = parser.parse_args()
 
 if args.resource == 'cpu_s':
-    resource_key = "CPU Usage(%)[TD-Agent#0]"
+    resource_key = "CPU Usage(%)[Calyptia-Fluent#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
@@ -27,7 +27,7 @@ if args.resource == 'cpu_s':
     fig_name = 'CPU_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'rss_s':
-    resource_key = "RSS(MB)[TD-Agent#0]"
+    resource_key = "RSS(MB)[Calyptia-Fluent#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'RSS Usage (MB) '
     ylimit = 100
@@ -35,7 +35,7 @@ elif args.resource == 'rss_s':
     fig_name = 'RSS_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'vms_s':
-    resource_key = "VMS(MB)[TD-Agent#0]"
+    resource_key = "VMS(MB)[Calyptia-Fluent#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
@@ -106,16 +106,7 @@ inventory = InventoryManager(loader=data_loader,
                              sources=[inventory_file_name])
 
 collector = inventory.get_groups_dict()['collector'][0]
-
-tfvars = {}
-with open("terraform.tfvars") as tfvarfile:
-    for line in tfvarfile:
-        name, var = line.partition("=")[::2]
-        tfvars[name.strip()] = var
-
-print(tfvars)
-username = tfvars["collector-username"].strip(" \"\n")
-print(collector)
+username = "ubuntu" # Fixed username is used on AWS.
 
 sns.set()
 sns.set_style('whitegrid')
