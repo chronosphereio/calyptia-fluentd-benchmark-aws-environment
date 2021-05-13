@@ -73,7 +73,7 @@ elif args.resource == 'sent_bytes':
     resource_key = '\\\\FLUENTD-WINSERV\\Network Interface(AWS PV Network Device _0)\\Bytes Sent/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Bytes Sent (KiB/sec)'
-    ylimit = 2000
+    ylimit = 3500
     fig_title = 'Bytes Sent Usage'
     fig_name = 'Bytes_Sent_usage.png'
     divide_base = 1024
