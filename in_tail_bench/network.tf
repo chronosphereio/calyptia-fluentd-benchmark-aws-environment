@@ -43,12 +43,19 @@ resource "aws_route_table_association" "a" {
 
 resource "aws_security_group" "sg" {
   name        = "Linux sg"
-  description = "Allow ssh/icmp inbound traffic"
+  description = "Allow ssh/icmp/fluentd forward inbound traffic"
   vpc_id      = aws_vpc.fluentd.id
 
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 24224
+    to_port     = 24224
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
