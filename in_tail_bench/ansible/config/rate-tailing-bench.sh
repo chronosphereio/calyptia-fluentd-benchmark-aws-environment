@@ -26,7 +26,7 @@ if [ -z $RATE ]; then
     usage
 fi
 
-td-agent -c ${HOME}/td-agent.conf -o td-agent.log &
+calyptia-fluentd -c ${HOME}/calyptia-fluentd.conf -o calyptia-fluentd.log &
 
 sleep 3
 
@@ -38,4 +38,4 @@ python3 -u `which monitor` $STEP | tee usage-$RATE.tsv
 
 killall -TERM dummer
 killall -TERM ruby
-killall -TERM td-agent
+killall -TERM calyptia-fluentd
