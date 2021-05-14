@@ -1,19 +1,27 @@
-provider "azurerm" {
-  # The "feature" block is required for AzureRM provider 2.x.
-  # If you are using version 1.x, the "features" block is not allowed.
-  version = "~>2.0"
-  features {}
+# definition provider
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+
+    local = {
+      version = "~> 2.1"
+    }
+
+    null = {
+      version = "~> 3.1"
+    }
+  }
 }
 
-provider "local" {
-  version = "~>1.4"
+# Configure the AWS Provider
+provider "aws" {
+  region     = var.provider-region
+  access_key = var.secret-access-key
+  secret_key = var.secret-key
 }
 
-provider "null" {
-  version = "~>2.1"
-}
-
-resource "azurerm_resource_group" "fluentd-syslog" {
-  name     = var.resource-group
-  location = var.region
-}
+provider "local" {}
+provider "null" {}

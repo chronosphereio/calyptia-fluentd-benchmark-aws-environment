@@ -2,11 +2,9 @@ variable "prefix" {
   default = "fluentd"
 }
 
-variable "aggregator-username" {}
-variable "aggregator-password" {}
-variable "collector-username" {}
-variable "collector-password" {}
-variable "region" {}
+variable "provider-region" {}
+variable "secret-access-key" {}
+variable "secret-key" {}
+variable "availability-zone" {}
 variable "ssh-private-key-path" {}
-variable "resource-group" {}
 variable "environment" {}

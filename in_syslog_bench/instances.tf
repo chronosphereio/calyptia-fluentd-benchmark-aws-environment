@@ -1,81 +1,85 @@
-resource "azurerm_virtual_machine" "linux-aggregator" {
-  name                  = "${var.prefix}-aggregator-linux-vm"
-  location              = azurerm_resource_group.fluentd-syslog.location
-  resource_group_name   = azurerm_resource_group.fluentd-syslog.name
-  network_interface_ids = [azurerm_network_interface.linux-aggregator.id]
-  vm_size               = "Standard_B2S"
+data "aws_ami" "centos8" {
+  most_recent = true
 
-  # Uncomment this line to delete the OS disk automatically when deleting the VM
-  delete_os_disk_on_termination = true
+  filter {
+    name   = "name"
+    values = ["CentOS 8*"]
+  }
 
-  # Uncomment this line to delete the data disks automatically when deleting the VM
-  delete_data_disks_on_termination = true
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
 
-  storage_image_reference {
-    publisher = var.environment == "rhel" ? "RedHat" : "OpenLogic"
-    offer     = var.environment == "rhel" ? "RHEL"   : "CentOS"
-    sku       = var.environment == "rhel" ? "7-LVM"  : "7.5"
-    version   = "latest"
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
-  storage_os_disk {
-    name              = "aggregator-disk1"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  os_profile {
-    computer_name  = var.environment == "rhel" ? "${var.prefix}-aggregator-rhel" : "${var.prefix}-aggregator-centos75"
-    admin_username = var.aggregator-username
-    admin_password = var.aggregator-password
-  }
-  os_profile_linux_config {
-    disable_password_authentication = true
 
-    ssh_keys {
-      path     = "/home/${var.aggregator-username}/.ssh/authorized_keys"
-      key_data = file("../aws_key/id_rsa_aws.pub")
-    }
+  # CentOS (https://centos.org/download/aws-images/)
+  owners = ["125523088429"]
+}
+
+data "aws_ami" "rhel8" {
+  most_recent = true
+  name_regex  = "^RHEL-8.2.0_HVM-"
+  owners      = ["309956199498"] # Red Hat's account ID.
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
   }
-  tags = {
-    environment = "benchmarking aggregator"
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
   }
 }
 
-resource "azurerm_virtual_machine" "linux-collector" {
-  name                             = "${var.prefix}-collector-linux-vm"
-  location                         = azurerm_resource_group.fluentd-syslog.location
-  resource_group_name              = azurerm_resource_group.fluentd-syslog.name
-  network_interface_ids            = [azurerm_network_interface.linux-collector.id]
-  vm_size                          = "Standard_B2S"
-  delete_os_disk_on_termination    = true
-  delete_data_disks_on_termination = true
+resource "aws_key_pair" "fluentd" {
+  key_name   = "fluentd"
+  public_key = file("../aws_key/id_rsa_aws.pub")
+}
 
-  storage_image_reference {
-    publisher = var.environment == "rhel" ? "RedHat" : "OpenLogic"
-    offer     = var.environment == "rhel" ? "RHEL"   : "CentOS"
-    sku       = var.environment == "rhel" ? "7-LVM"  : "7.5"
-    version   = "latest"
-  }
-  storage_os_disk {
-    name              = "collector-disk1"
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
-  }
-  os_profile {
-    computer_name  = var.environment == "rhel" ? "${var.prefix}-collector-rhel" : "${var.prefix}-collector-centos75"
-    admin_username = var.collector-username
-    admin_password = var.collector-password
-  }
-  os_profile_linux_config {
-    disable_password_authentication = true
+resource "aws_instance" "aggregator" {
+  ami                         = var.environment == "rhel" ? data.aws_ami.rhel8.id : data.aws_ami.centos8.id
+  instance_type               = "t2.medium"
+  subnet_id                   = aws_subnet.public.id
+  private_ip                  = "10.2.3.4"
+  associate_public_ip_address = true
+  security_groups = [
+    aws_security_group.sg.id
+  ]
+  key_name          = aws_key_pair.fluentd.id
+  availability_zone = var.availability-zone
 
-    ssh_keys {
-      path     = "/home/${var.collector-username}/.ssh/authorized_keys"
-      key_data = file("../aws_key/id_rsa_aws.pub")
-    }
-  }
+  depends_on = [aws_internet_gateway.gw]
+
   tags = {
-    environment = "benchmarking collector"
+    Name = "benchmarking on aggregator"
+  }
+}
+
+resource "aws_instance" "collector" {
+  ami                         = var.environment == "rhel" ? data.aws_ami.rhel8.id : data.aws_ami.centos8.id
+  instance_type               = "t2.medium"
+  subnet_id                   = aws_subnet.public.id
+  private_ip                  = "10.2.3.5"
+  associate_public_ip_address = true
+  security_groups = [
+    aws_security_group.sg.id
+  ]
+  key_name          = aws_key_pair.fluentd.id
+  availability_zone = var.availability-zone
+
+  depends_on = [aws_internet_gateway.gw]
+
+  tags = {
+    Name = "benchmarking on collector"
   }
 }

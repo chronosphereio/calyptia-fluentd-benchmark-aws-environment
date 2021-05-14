@@ -1,19 +1,17 @@
-data "azurerm_public_ip" "linux-collector" {
-  name                = azurerm_public_ip.linux-collector.name
-  resource_group_name = azurerm_virtual_machine.linux-collector.resource_group_name
+data "aws_eip" "collector" {
+  id = aws_eip.collector.id
 }
 
 output "collector_public_ip_address" {
-  value = data.azurerm_public_ip.linux-collector.ip_address
+  value = aws_eip.collector.public_ip
 }
 
-data "azurerm_public_ip" "linux-aggregator" {
-  name                = azurerm_public_ip.linux-aggregator.name
-  resource_group_name = azurerm_virtual_machine.linux-aggregator.resource_group_name
+data "aws_eip" "aggregator" {
+  id = aws_eip.aggregator.id
 }
 
 output "aggregator_public_ip_address" {
-  value = data.azurerm_public_ip.linux-aggregator.ip_address
+  value = aws_eip.aggregator.public_ip
 }
 
 resource "local_file" "inventory" {
@@ -21,19 +19,19 @@ resource "local_file" "inventory" {
   file_permission = "0644"
   content         = <<EOL
 [collector]
-${data.azurerm_public_ip.linux-collector.ip_address}
+${data.aws_eip.collector.public_ip}
 
 [collector:vars]
 ansible_port=22
-ansible_user=${var.collector-username}
+ansible_user=ubuntu
 ansible_ssh_private_key_file=${var.ssh-private-key-path}
 
 [aggregator]
-${data.azurerm_public_ip.linux-aggregator.ip_address}
+${data.aws_eip.aggregator.public_ip}
 
 [aggregator:vars]
 ansible_port=22
-ansible_user=${var.aggregator-username}
+ansible_user=ubuntu
 ansible_ssh_private_key_file=${var.ssh-private-key-path}
 EOL
 }
