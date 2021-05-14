@@ -3,20 +3,25 @@
   vars_files:
     - version.yml
   tasks:
-    - name: Download td-agent
+    - name: install Calyptia-Fluentd GPG key
+      become: yes
+      rpm_key:
+        state: present
+        key: https://calyptia-fluentd.s3.us-east-2.amazonaws.com/GPG-KEY-calyptia-fluentd.asc
+    - name: Download calyptia-fluentd
       get_url:
-        url: "http://packages.treasuredata.com.s3.amazonaws.com/4/redhat/7/x86_64/td-agent-{{ td_agent_version }}.el7.x86_64.rpm"
-        dest: "/home/{{ ansible_env.USER }}/td-agent-{{ td_agent_version }}.el7.x86_64.rpm"
-    - name: Install td-agent
+        url="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd-1.0.0-1.el8.x86_64.rpm"
+        dest="/home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm"
+    - name: Install calyptia-fluentd
       become: true
       yum:
-        name: /home/{{ ansible_env.USER }}/td-agent-{{ td_agent_version }}.el7.x86_64.rpm
+        name: /home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm
         state: present
     - name: Copy aggregator configuration
       become: true
       copy:
         src: ./config/fluent-aggregator.conf
-        dest: /etc/td-agent/td-agent.conf
+        dest: /etc/calyptia-fluentd/calyptia-fluentd.conf
     - name: Copy certificates
       become: true
       copy:
@@ -25,9 +30,9 @@
       with_items:
         - ca_key.pem
         - ca_cert.pem
-    - name: Make sure a td-agent service is restarted
+    - name: Make sure a calyptia-fluentd service is restarted
       become: true
       systemd:
         state: restarted
         daemon_reload: yes
-        name: td-agent
+        name: calyptia-fluentd

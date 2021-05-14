@@ -3,35 +3,40 @@
   vars_files:
     - version.yml
   tasks:
-    - name: Download td-agent
+    - name: install Calyptia-Fluentd GPG key
+      become: yes
+      rpm_key:
+        state: present
+        key: https://calyptia-fluentd.s3.us-east-2.amazonaws.com/GPG-KEY-calyptia-fluentd.asc
+    - name: Download calyptia-fluentd
       get_url:
-        url: "http://packages.treasuredata.com.s3.amazonaws.com/4/redhat/7/x86_64/td-agent-{{ td_agent_version }}.el7.x86_64.rpm"
-        dest: "/home/{{ ansible_env.USER }}/td-agent-{{ td_agent_version }}.el7.x86_64.rpm"
-    - name: Install td-agent
+        url="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd-1.0.0-1.el8.x86_64.rpm"
+        dest="/home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm"
+    - name: Install calyptia-fluentd
       become: true
       yum:
-        name: /home/{{ ansible_env.USER }}/td-agent-{{ td_agent_version }}.el7.x86_64.rpm
+        name: /home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm
         state: present
     - name: Copy collector configuration
       become: true
       copy:
         src: ./config/fluent-collector.conf
-        dest: /etc/td-agent/td-agent.conf
+        dest: /etc/calyptia-fluentd/calyptia-fluentd.conf
     - name: Copy certificates
       become: true
       copy:
         src: ./config/certs/ca_cert.pem
         dest: /etc/ssl/certs/ca_cert.pem
-    - name: Make sure a td-agent service is stopped
+    - name: Make sure a calyptia-fluentd service is stopped
       become: true
       systemd:
         state: stopped
         daemon_reload: yes
-        name: td-agent
+        name: calyptia-fluentd
     - name: Enable EPEL
       become: true
       yum:
-        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+        name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
         state: present
     - name: Install syslog-ng
       become: true
@@ -54,7 +59,7 @@
       become: true
       yum:
         name:
-          - python36-psutil
+          - python38-psutil
         state: present
     - name: Add configuration for receiving rsyslog messages
       become: true

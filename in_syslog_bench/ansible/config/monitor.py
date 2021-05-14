@@ -69,7 +69,7 @@ recv bytes(/sec)\tsend bytes(/sec)", end='\t')
 
 steps = 1
 RUBY = "ruby"
-TD_AGENT = "td-agent"
+CALYPTIA_FLUENTD = "calyptia-fluentd"
 metrics = []
 ruby_process_count = 0
 td_agent_process_count = 0
@@ -85,12 +85,12 @@ for proc in psutil.process_iter():
         print(f"{CPU:8}\t{RSS:8}\t{VMS:8}", end="\t")
         ruby_process_count = ruby_process_count + 1
 
-    if proc.name() == TD_AGENT:
+    if proc.name() == CALYPTIA_FLUENTD:
         metric = ProcessMetrics(proc)
         metrics.append(metric)
-        CPU = "CPU Usage(%)[TD-Agent#{0}]".format(td_agent_process_count)
-        RSS = "RSS(MB)[TD-Agent#{0}]".format(td_agent_process_count)
-        VMS = "VMS(MB)[TD-Agent#{0}]".format(td_agent_process_count)
+        CPU = "CPU Usage(%)[Calyptia-Fluentd#{0}]".format(td_agent_process_count)
+        RSS = "RSS(MB)[Calyptia-Fluentd#{0}]".format(td_agent_process_count)
+        VMS = "VMS(MB)[Calyptia-Fluentd#{0}]".format(td_agent_process_count)
         print(f"{CPU:8}\t{RSS:8}\t{VMS:8}", end="\t")
         td_agent_process_count = td_agent_process_count + 1
 

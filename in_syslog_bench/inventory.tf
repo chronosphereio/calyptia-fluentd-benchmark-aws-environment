@@ -23,7 +23,7 @@ ${data.aws_eip.collector.public_ip}
 
 [collector:vars]
 ansible_port=22
-ansible_user=ubuntu
+ansible_user=${var.environment == "rhel" ? "ec2-user" : "centos"}
 ansible_ssh_private_key_file=${var.ssh-private-key-path}
 
 [aggregator]
@@ -31,7 +31,7 @@ ${data.aws_eip.aggregator.public_ip}
 
 [aggregator:vars]
 ansible_port=22
-ansible_user=ubuntu
+ansible_user=${var.environment == "rhel" ? "ec2-user" : "centos"}
 ansible_ssh_private_key_file=${var.ssh-private-key-path}
 EOL
 }
