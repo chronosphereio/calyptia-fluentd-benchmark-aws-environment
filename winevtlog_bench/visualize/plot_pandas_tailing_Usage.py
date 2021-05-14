@@ -22,7 +22,7 @@ parser.add_argument('--base-path', default='')
 args = parser.parse_args()
 
 if args.resource == 'cpu_s':
-    resource_key = '\\\\fluentd-winserv\\Process(ruby)\\% Processor Time'
+    resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby)\\% Processor Time'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
@@ -30,7 +30,7 @@ if args.resource == 'cpu_s':
     fig_name = 'CPU_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'cpu_w':
-    resource_key = '\\\\fluentd-winserv\\Process(ruby#1)\\% Processor Time'
+    resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby#1)\\% Processor Time'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
@@ -38,23 +38,23 @@ elif args.resource == 'cpu_w':
     fig_name = 'CPU_usage_on_worker.png'
     divide_base = -1
 elif args.resource == 'private_bytes_s':
-    resource_key = '\\\\fluentd-winserv\\Process(ruby)\\Private Bytes'
+    resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby)\\Private Bytes'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Private Bytes Usage (MB)'
-    ylimit = 100
+    ylimit = 150
     fig_title = 'Private Bytes Usage (Supervisor)'
     fig_name = 'Private_Bytes_usage_on_supervisor.png'
     divide_base = 1024*1024
 elif args.resource == 'private_bytes_w':
-    resource_key = '\\\\fluentd-winserv\\Process(ruby#1)\\Private Bytes'
+    resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby#1)\\Private Bytes'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Private Bytes (MB)'
-    ylimit = 100
+    ylimit = 150
     fig_title = 'Private Bytes Usage (Worker)'
     fig_name = 'Private_Bytes_usage_on_worker.png'
     divide_base = 1024*1024
 elif args.resource == 'working_set_s':
-    resource_key = '\\\\fluentd-winserv\\Process(ruby)\\Working Set'
+    resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby)\\Working Set'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Working Set (MB)'
     ylimit = 100
@@ -62,7 +62,7 @@ elif args.resource == 'working_set_s':
     fig_name = 'Working_Set_usage_on_supervisor.png'
     divide_base = 1024*1024
 elif args.resource == 'working_set_w':
-    resource_key = '\\\\fluentd-winserv\\Process(ruby#1)\\Working Set'
+    resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby#1)\\Working Set'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Working Set (MB)'
     ylimit = 100
@@ -70,7 +70,7 @@ elif args.resource == 'working_set_w':
     fig_name = 'Working_Set_usage_on_worker.png'
     divide_base = 1024*1024
 elif args.resource == 'sent_bytes':
-    resource_key = '\\\\fluentd-winserv\\Network Interface(Microsoft Hyper-V Network Adapter)\\Bytes Sent/sec'
+    resource_key = '\\\\FLUENTD-WINSERV\\Network Interface(AWS PV Network Device _0)\\Bytes Sent/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Bytes Sent (KiB/sec)'
     ylimit = 2000
@@ -78,7 +78,7 @@ elif args.resource == 'sent_bytes':
     fig_name = 'Bytes_Sent_usage.png'
     divide_base = 1024
 elif args.resource == 'received_bytes':
-    resource_key = '\\\\fluentd-winserv\\Network Interface(Microsoft Hyper-V Network Adapter)\\Bytes Received/sec'
+    resource_key = '\\\\FLUENTD-WINSERV\\Network Interface(AWS PV Network Device _0)\\Bytes Received/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Bytes Received (KiB/sec)'
     ylimit = 2000
@@ -86,7 +86,7 @@ elif args.resource == 'received_bytes':
     fig_name = 'Bytes_Received_usage.png'
     divide_base = 1024
 elif args.resource == 'disk_reads':
-    resource_key = '\\\\fluentd-winserv\\PhysicalDisk(_Total)\\Disk Reads/sec'
+    resource_key = '\\\\FLUENTD-WINSERV\\PhysicalDisk(_Total)\\Disk Reads/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Disk Read (bytes/sec)'
     ylimit = 1000
@@ -94,7 +94,7 @@ elif args.resource == 'disk_reads':
     fig_name = 'Disk_Read_usage.png'
     divide_base = -1
 elif args.resource == 'disk_writes':
-    resource_key = '\\\\fluentd-winserv\\PhysicalDisk(_Total)\\Disk Writes/sec'
+    resource_key = '\\\\FLUENTD-WINSERV\\PhysicalDisk(_Total)\\Disk Writes/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Disk Write (bytes/sec)'
     ylimit = 1000
@@ -194,7 +194,7 @@ print(df_melt.head())
 fig = plt.figure(figsize=(23, 12))
 plt.title(fig_title)
 
-ax = fig.add_subplot(1, 1, 1)
+f, ax = plt.subplots(figsize=(23, 12))
 ax.set_ylim(0, ylimit)
 plot = sns.boxplot(x='variable', y='value', data=df_melt, showfliers=False,
                    ax=ax, showmeans=True)
