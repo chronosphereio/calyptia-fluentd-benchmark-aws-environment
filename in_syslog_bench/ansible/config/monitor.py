@@ -69,10 +69,11 @@ recv bytes(/sec)\tsend bytes(/sec)", end='\t')
 
 steps = 1
 RUBY = "ruby"
-CALYPTIA_FLUENTD = "calyptia-fluentd"
+# Linux's TASK_COMM_LEN is up to 15.
+CALYPTIA_FLUENTD = "calyptia-fluentd"[:15]
 metrics = []
 ruby_process_count = 0
-td_agent_process_count = 0
+calyptia_fluentd_process_count = 0
 io_metrics = IOMetrics()
 
 for proc in psutil.process_iter():
@@ -88,11 +89,11 @@ for proc in psutil.process_iter():
     if proc.name() == CALYPTIA_FLUENTD:
         metric = ProcessMetrics(proc)
         metrics.append(metric)
-        CPU = "CPU Usage(%)[Calyptia-Fluentd#{0}]".format(td_agent_process_count)
-        RSS = "RSS(MB)[Calyptia-Fluentd#{0}]".format(td_agent_process_count)
-        VMS = "VMS(MB)[Calyptia-Fluentd#{0}]".format(td_agent_process_count)
+        CPU = "CPU Usage(%)[Calyptia-Fluentd#{0}]".format(calyptia_fluentd_process_count)
+        RSS = "RSS(MB)[Calyptia-Fluentd#{0}]".format(calyptia_fluentd_process_count)
+        VMS = "VMS(MB)[Calyptia-Fluentd#{0}]".format(calyptia_fluentd_process_count)
         print(f"{CPU:8}\t{RSS:8}\t{VMS:8}", end="\t")
-        td_agent_process_count = td_agent_process_count + 1
+        calyptia_fluentd_process_count = calyptia_fluentd_process_count + 1
 
 print("")
 

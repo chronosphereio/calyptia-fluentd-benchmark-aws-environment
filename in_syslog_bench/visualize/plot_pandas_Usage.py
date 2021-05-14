@@ -19,7 +19,7 @@ parser.add_argument('--resource',
 args = parser.parse_args()
 
 if args.resource == 'cpu_s':
-    resource_key = "CPU Usage(%)[TD-Agent#0]"
+    resource_key = "CPU Usage(%)[Calyptia-Fluentd#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
@@ -27,7 +27,7 @@ if args.resource == 'cpu_s':
     fig_name = 'CPU_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'rss_s':
-    resource_key = "RSS(MB)[TD-Agent#0]"
+    resource_key = "RSS(MB)[Calyptia-Fluentd#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'RSS Usage (MB) '
     ylimit = 100
@@ -35,7 +35,7 @@ elif args.resource == 'rss_s':
     fig_name = 'RSS_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'vms_s':
-    resource_key = "VMS(MB)[TD-Agent#0]"
+    resource_key = "VMS(MB)[Calyptia-Fluentd#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
@@ -114,7 +114,12 @@ with open("terraform.tfvars") as tfvarfile:
         tfvars[name.strip()] = var
 
 print(tfvars)
-username = tfvars["collector-username"].strip(" \"\n")
+environment = tfvars["environment"].strip(" \"\n")
+if environment == "rhel":
+    username = "ec2-user"
+else:
+    username = "centos"
+
 print(collector)
 
 sns.set()
@@ -150,7 +155,7 @@ print(df_melt.head())
 
 fig = plt.figure(figsize=(8, 6))
 plt.title(fig_title)
-ax = fig.add_subplot(1, 1, 1)
+f, ax = plt.subplots()
 ax.set_ylim(0, ylimit)
 plot = sns.boxplot(x='variable', y='value', data=df_melt, showfliers=False, ax=ax, showmeans=True)
 plot.set(
