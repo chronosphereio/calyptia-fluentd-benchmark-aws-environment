@@ -2,13 +2,13 @@
 - hosts: collector
   tasks:
     - name: baseline syslog benchmark
-      shell: rate-syslog-bench -s 300 -r 0
+      shell: rate-syslog-bench -s 250 -r 0
     - name: Generating 500 lines/sec syslog benchmark
-      shell: rate-syslog-bench -s 300 -r 500
+      shell: rate-syslog-bench -s 250 -r 500
     - name: Generating 1000 lines/sec syslog benchmark
-      shell: rate-syslog-bench -s 300 -r 1000
+      shell: rate-syslog-bench -s 250 -r 1000
     - name: Generating 1500 lines/sec syslog benchmark
-      shell: rate-syslog-bench -s 300 -r 1500
+      shell: rate-syslog-bench -s 250 -r 1500
     - name: Find benchmarking result files
       find:
         paths: /home/{{ ansible_env.USER }}/
