@@ -144,7 +144,7 @@ print(df_melt.head())
 
 fig = plt.figure(figsize=(8, 6))
 plt.title(fig_title)
-f, ax = plt.subplots()
+f, ax = plt.subplots(figsize=(8, 6))
 ax.set_ylim(0, ylimit)
 plot = sns.boxplot(x='variable', y='value', data=df_melt, showfliers=False, ax=ax, showmeans=True)
 plot.set(
