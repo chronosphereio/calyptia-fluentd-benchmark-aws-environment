@@ -37,3 +37,5 @@ fi
 sudo python3.8 -u /usr/local/bin/monitor $STEP | tee usage-$RATE.tsv
 
 sudo killall -TERM calyptia-fluentd
+
+exit 0

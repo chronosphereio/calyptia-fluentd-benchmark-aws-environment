@@ -39,3 +39,5 @@ python3 -u `which monitor` $STEP | tee usage-$RATE.tsv
 killall -TERM dummer
 killall -TERM ruby
 killall -TERM calyptia-fluentd
+
+exit 0
