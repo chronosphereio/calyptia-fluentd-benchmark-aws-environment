@@ -31,7 +31,7 @@ sudo calyptia-fluentd -o calyptia-fluentd.log &
 sleep 3
 
 if [ $RATE -gt 0 ]; then
-    loggen --size 300 --rate ${RATE} --interval $(( 2*STEP )) 127.0.0.1 514 2> /dev/null &
+    loggen --size 300 --rate ${RATE} --interval $(( 2*STEP )) -i 127.0.0.1 514 2> /dev/null &
 fi
 
 sudo python3.8 -u /usr/local/bin/monitor $STEP | tee usage-$RATE.tsv
