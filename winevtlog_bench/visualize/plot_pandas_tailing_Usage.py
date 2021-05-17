@@ -191,10 +191,9 @@ print(medians)
 df_melt = pd.melt(df)
 print(df_melt.head())
 
-fig = plt.figure(figsize=(23, 12))
 plt.title(fig_title)
 
-f, ax = plt.subplots(figsize=(23, 12))
+fig, ax = plt.subplots(figsize=(23, 12))
 ax.set_ylim(0, ylimit)
 plot = sns.boxplot(x='variable', y='value', data=df_melt, showfliers=False,
                    ax=ax, showmeans=True)
