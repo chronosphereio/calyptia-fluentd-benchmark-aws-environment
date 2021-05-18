@@ -106,7 +106,20 @@ inventory = InventoryManager(loader=data_loader,
                              sources=[inventory_file_name])
 
 collector = inventory.get_groups_dict()['collector'][0]
-username = "ubuntu" # Fixed username is used on AWS.
+tfvars = {}
+with open("terraform.tfvars") as tfvarfile:
+    for line in tfvarfile:
+        name, var = line.partition("=")[::2]
+        tfvars[name.strip()] = var
+
+print(tfvars)
+environment = tfvars["environment"].strip(" \"\n")
+if environment == "rhel":
+    username = "ec2-user"
+else:
+    username = "centos"
+
+print(collector)
 
 sns.set()
 sns.set_style('whitegrid')
