@@ -3,25 +3,20 @@
   vars_files:
     - version.yml
   tasks:
-    - name: Check if calyptia-fluentd is installed
-      command: dpkg-query -W calyptia-fluentd
-      register: calyptia_fluentd_check_deb
-      failed_when: calyptia_fluentd_check_deb.rc > 1
-      changed_when: calyptia_fluentd_check_deb.rc == 1
+    - name: install Calyptia-Fluentd GPG key
+      become: yes
+      rpm_key:
+        state: present
+        key: https://calyptia-fluentd.s3.us-east-2.amazonaws.com/GPG-KEY-calyptia-fluentd.asc
     - name: Download calyptia-fluentd
       get_url:
-        url="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb"
-        dest="/home/{{ ansible_env.USER }}/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb"
-      when: calyptia_fluentd_check_deb.rc == 1
-    - name: Install python-apt
-      become: true
-      apt:
-        name: python3-apt
+        url="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd-1.0.0-1.el8.x86_64.rpm"
+        dest="/home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm"
     - name: Install calyptia-fluentd
       become: true
-      apt:
-        deb: /home/{{ ansible_env.USER }}/calyptia-fluentd_{{ calyptia_fluentd_version }}_amd64.deb
-      when: calyptia_fluentd_check_deb.rc == 1
+      yum:
+        name: /home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm
+        state: present
     - name: Copy aggregator configuration
       become: true
       copy:
