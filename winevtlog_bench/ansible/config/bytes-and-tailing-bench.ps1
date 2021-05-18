@@ -6,7 +6,6 @@ Param(
     [parameter(mandatory=$true)][int32]$LineRate
  )
 
-$ENV:PATH="C:\opt\calyptia-fluentd\embedded\bin;" + $ENV:PATH
 $ENV:PATH="C:\opt\calyptia-fluentd\bin;" + $ENV:PATH
 
 cd $workdir
