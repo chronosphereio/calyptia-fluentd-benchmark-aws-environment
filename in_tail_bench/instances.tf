@@ -1,9 +1,14 @@
-data "aws_ami" "ubuntu" {
+data "aws_ami" "centos8" {
   most_recent = true
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+    values = ["CentOS 8*"]
+  }
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
   }
 
   filter {
@@ -11,7 +16,29 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
+  # CentOS (https://centos.org/download/aws-images/)
+  owners = ["125523088429"]
+}
+
+data "aws_ami" "rhel8" {
+  most_recent = true
+  name_regex  = "^RHEL-8.2.0_HVM-"
+  owners      = ["309956199498"] # Red Hat's account ID.
+
+  filter {
+    name   = "architecture"
+    values = ["x86_64"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
 }
 
 resource "aws_key_pair" "fluentd" {
@@ -20,7 +47,7 @@ resource "aws_key_pair" "fluentd" {
 }
 
 resource "aws_instance" "aggregator" {
-  ami                         = data.aws_ami.ubuntu.id
+  ami                         = var.environment == "rhel" ? data.aws_ami.rhel8.id : data.aws_ami.centos8.id
   instance_type               = "t2.medium"
   subnet_id                   = aws_subnet.public.id
   private_ip                  = "10.1.3.4"
@@ -39,7 +66,7 @@ resource "aws_instance" "aggregator" {
 }
 
 resource "aws_instance" "collector" {
-  ami                         = data.aws_ami.ubuntu.id
+  ami                         = var.environment == "rhel" ? data.aws_ami.rhel8.id : data.aws_ami.centos8.id
   instance_type               = "t2.medium"
   subnet_id                   = aws_subnet.public.id
   private_ip                  = "10.1.3.5"
