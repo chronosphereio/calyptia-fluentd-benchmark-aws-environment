@@ -32,4 +32,6 @@ jobs:
         run: cd ${{ matrix.bench }} && ansible-lint ansible/collector.yml && ansible-lint ansible/aggregator.yml
       - name: Validate ansible ${{ matrix.bench }}
         if: matrix.bench == 'winevtlog_bench'
-        run: cd ${{ matrix.bench }} && ansible-lint ansible/windows.yml && ansible-lint ansible/aggregator.yml 
+        run: |
+          ansible-galaxy collection install ansible.windows
+          cd ${{ matrix.bench }} && ansible-lint ansible/windows.yml && ansible-lint ansible/aggregator.yml
