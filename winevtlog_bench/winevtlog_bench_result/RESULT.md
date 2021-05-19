@@ -22,10 +22,11 @@
 Param(
     [string]$workdir = "C:\tools",
     [parameter(mandatory=$true)][int32]$Length,
-    [int32]$Total = 120000
+    [int32]$Total = 120000,
+    [string]$PackageName = "calyptia-fluentd"
 )
 
-$ENV:PATH="C:\opt\calyptia-fluentd\bin;" + $ENV:PATH
+$ENV:PATH="C:\opt\" + $PackageName + "\bin;" + $ENV:PATH
 
 cd $workdir
 
@@ -42,7 +43,7 @@ if ($count -ge 1) {
     }
 }
 
-Start-Process fluentd -ArgumentList "-c", "C:\opt\calyptia-fluentd\fluent-collector.conf", "-o", "C:\opt\calyptia-fluentd\message-$Length-bytes.log" -NoNewWindow -PassThru
+Start-Process fluentd -ArgumentList "-c", "C:\opt\$PackageName\fluent-collector.conf", "-o", "C:\opt\$PackageName\message-$PackageName-$Length-bytes.log" -NoNewWindow -PassThru
 
 while ($true) {
     $count = (Get-Process -Name ruby -ErrorAction SilentlyContinue).Count
@@ -60,9 +61,9 @@ while($true) {
     Start-Sleep 1
 }
 
-Start-Process typeperf -ArgumentList "-cf", "counters.txt", "-sc", "2400", "-si", "1" -PassThru -RedirectStandardOutput C:\tools\${Length}-resource-usage.csv
+Start-Process typeperf -ArgumentList "-cf", "counters.txt", "-sc", "2400", "-si", "1" -PassThru -RedirectStandardOutput C:\tools\${Length}-${PackageName}-resource-usage.csv
 
-$socket_count_job = Start-Process powershell -ArgumentList "-ExecutionPolicy", "RemoteSigned", C:\tools\socket-count.ps1 -PassThru -NoNewWindow -RedirectStandardOutput C:\tools\${Length}-socket-usage.csv
+$socket_count_job = Start-Process powershell -ArgumentList "-ExecutionPolicy", "RemoteSigned", C:\tools\socket-count.ps1 -PassThru -NoNewWindow -RedirectStandardOutput C:\tools\${Length}-${PackageName}-socket-usage.csv
 
 Start-Process C:\tools\EventLogBencher\EventLogBencher.exe -ArgumentList "wait", "-w", "50", "-t", "$Total", "-l", "$Length" -Wait -NoNewWindow
 
@@ -125,45 +126,90 @@ taskkill /F /IM typeperf.exe
 </match>
 ```
 
-## Results
+## Results -- Bloxplots
 
-### CPU usage -- Supervisor
+### Calyptia-Fluentd
 
-![CPU Usage on supervisor](CPU_usage_on_supervisor.png)
+#### CPU usage -- Supervisor
+
+![Calyptia-Fluentd CPU Usage on supervisor](Calyptia-Fluentd-CPU_usage_on_supervisor.png)
 
 CPU usage of Fluentd supervisor is around zero.
 
-### CPU usage -- Worker
+#### CPU usage -- Worker
 
-![CPU Usage on worker](CPU_usage_on_worker.png)
+![Calyptia-Fluentd CPU Usage on worker](Calyptia-Fluentd-CPU_usage_on_worker.png)
 
 CPU usage of Fluentd worker weakly corresponds to flow rate.
 (This plot does not adjust with CPU counts.)
 
-### Working Set usage -- Supervisor
+#### Working Set usage -- Supervisor
 
-![Working Set usage on supervisor](Working_Set_usage_on_supervisor.png)
+![Calyptia-Fluentd Working Set usage on supervisor](Calyptia-Fluentd-Working_Set_usage_on_supervisor.png)
 
 Working Set usage of Fluentd supervisor is almost same.
 This plot uses actual values of RSS.
 
-### Working Set usage -- Worker
+#### Working Set usage -- Worker
 
-![Working Set Usage on worker](Working_Set_usage_on_worker.png)
+![Calyptia-Fluentd Working Set Usage on worker](Calyptia-Fluentd-Working_Set_usage_on_worker.png)
 
 Working Set usage of Fluentd worker corresponds to flow rate.
 This plot uses actual values of Working Set.
 
-### Private Bytes usage -- Supervisor
+#### Private Bytes usage -- Supervisor
 
-![Private Bytes Usage on supervisor](Private_Bytes_usage_on_supervisor.png)
+![Calyptia-Fluentd Private Bytes Usage on supervisor](Calyptia-Fluentd-Private_Bytes_usage_on_supervisor.png)
 
 Private Bytes usage of Fluentd supervisor is almost same.
 This plot uses actual values of Private Bytes.
 
-### Private Bytes usage -- Worker
+#### Private Bytes usage -- Worker
 
-![Private Bytes Usage on worker](Private_Bytes_usage_on_worker.png)
+![Calyptia-Fluentd Private Bytes Usage on worker](Calyptia-Fluentd-Private_Bytes_usage_on_worker.png)
+
+Private Bytes usage of Fluentd supervisor is almost same.
+This plot uses actual values of Private Bytes.
+
+### Td-Agent
+
+#### CPU usage -- Supervisor
+
+![Td-Agent CPU Usage on supervisor](Td-Agent-CPU_usage_on_supervisor.png)
+
+CPU usage of Fluentd supervisor is around zero.
+
+#### CPU usage -- Worker
+
+![Td-Agent CPU Usage on worker](Td-Agent-CPU_usage_on_worker.png)
+
+CPU usage of Fluentd worker weakly corresponds to flow rate.
+(This plot does not adjust with CPU counts.)
+
+#### Working Set usage -- Supervisor
+
+![Td-Agent Working Set usage on supervisor](Td-Agent-Working_Set_usage_on_supervisor.png)
+
+Working Set usage of Fluentd supervisor is almost same.
+This plot uses actual values of RSS.
+
+#### Working Set usage -- Worker
+
+![Td-Agent Working Set Usage on worker](Td-Agent-Working_Set_usage_on_worker.png)
+
+Working Set usage of Fluentd worker corresponds to flow rate.
+This plot uses actual values of Working Set.
+
+#### Private Bytes usage -- Supervisor
+
+![Td-Agent Private Bytes Usage on supervisor](Td-Agent-Private_Bytes_usage_on_supervisor.png)
+
+Private Bytes usage of Fluentd supervisor is almost same.
+This plot uses actual values of Private Bytes.
+
+#### Private Bytes usage -- Worker
+
+![Td-Agent Private Bytes Usage on worker](Td-Agent-Private_Bytes_usage_on_worker.png)
 
 Private Bytes usage of Fluentd supervisor is almost same.
 This plot uses actual values of Private Bytes.
@@ -173,4 +219,6 @@ This plot uses actual values of Private Bytes.
 * Worker Process
   * `in_windows_eventlog2` resource usage for flat file, which steadily growing with fixed flow rate, corresponds to:
      * Flow rate
+     * CPU Usage is almost same between Calyptia-Fluentd and Td-Agent
+        * Because `in_windows_eventlog2` plugin handles almost all Windows EventLog processing on its dependent gem `winevt_c` and the dependent gem is writte in C extension. That's why upgrading Ruby does not reduce CPU usage.
 * Supervisor process just monitors  life-and-death of worker process(es)
