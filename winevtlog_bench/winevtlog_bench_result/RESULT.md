@@ -214,6 +214,46 @@ This plot uses actual values of Private Bytes.
 Private Bytes usage of Fluentd supervisor is almost same.
 This plot uses actual values of Private Bytes.
 
+### Comparision with Lineplot
+
+#### CPU usage -- Supervisor
+
+![Compare with CPU usage on supervisor](LinePlot-CPU_usage_on_supervisor.png)
+
+CPU usages on supervisor are almost around zero.
+
+#### CPU usage -- Worker
+
+![Compare with CPU usage on supervisor](LinePlot-CPU_usage_on_worker.png)
+
+CPU usages on worker denote the same tendency. As described before section, the distribution is same. So, we cannot observe performance improvements on `in_windows_eventlog2` scenario.
+
+#### Working Set usage -- Supervisor
+
+![Compare with Working Set usage on supervisor](LinePlot-Working_Set_usage_on_supervisor.png)
+
+Working Set usages on supervisor are almost same in both of agents.
+
+#### Working Set usage -- Worker
+
+![Compare with Working Set usage on supervisor](LinePlot-Working_Set_usage_on_worker.png)
+
+Working Set usages on worker denote the same tendency per agents (td-agent vs. calyptia-fluentd).
+Calyptia-Fluentd uses slightly more Working Set.
+
+#### Private Bytes usage -- Supervisor
+
+![Compare with Private Bytes usage on supervisor](LinePlot-Private_Bytes_usage_on_supervisor.png)
+
+Private Bytes usages on supervisor are almost same in both of agents.
+
+#### Private Bytes Set usage -- Worker
+
+![Compare with Private Bytes Set usage on supervisor](LinePlot-Private_Bytes_usage_on_worker.png)
+
+Working Set usages on worker denote the same tendency per agents (td-agent vs. calyptia-fluentd).
+Calyptia-Fluentd uses slightly more Working Set.
+
 ## Conclusion
 
 * Worker Process
@@ -221,4 +261,5 @@ This plot uses actual values of Private Bytes.
      * Flow rate
      * CPU Usage is almost same between Calyptia-Fluentd and Td-Agent
         * Because `in_windows_eventlog2` plugin handles almost all Windows EventLog processing on its dependent gem `winevt_c` and the dependent gem is writte in C extension. That's why upgrading Ruby does not reduce CPU usage.
+     * Calyptia-Fluentd's memory usage is a bit of slightly higher than TD-Agent.
 * Supervisor process just monitors  life-and-death of worker process(es)
