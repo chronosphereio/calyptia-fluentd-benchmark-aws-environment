@@ -19,6 +19,7 @@ parser.add_argument('--resource',
                              'disk_reads', 'disk_writes'],
                     default='cpu')
 parser.add_argument('--base-path', default='')
+parser.add_argument('--package-name', default="calyptia-fluentd")
 args = parser.parse_args()
 
 if args.resource == 'cpu_s':
@@ -26,80 +27,80 @@ if args.resource == 'cpu_s':
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
-    fig_title = 'CPU Usage (Supervisor)'
-    fig_name = 'CPU_usage_on_supervisor.png'
+    fig_title = 'CPU Usage (Supervisor) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-CPU_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'cpu_w':
     resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby#1)\\% Processor Time'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
-    fig_title = 'CPU Usage (Worker)'
-    fig_name = 'CPU_usage_on_worker.png'
+    fig_title = 'CPU Usage (Worker) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-CPU_usage_on_worker.png'
     divide_base = -1
 elif args.resource == 'private_bytes_s':
     resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby)\\Private Bytes'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Private Bytes Usage (MB)'
     ylimit = 200
-    fig_title = 'Private Bytes Usage (Supervisor)'
-    fig_name = 'Private_Bytes_usage_on_supervisor.png'
+    fig_title = 'Private Bytes Usage (Supervisor) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Private_Bytes_usage_on_supervisor.png'
     divide_base = 1024*1024
 elif args.resource == 'private_bytes_w':
     resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby#1)\\Private Bytes'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Private Bytes (MB)'
     ylimit = 200
-    fig_title = 'Private Bytes Usage (Worker)'
-    fig_name = 'Private_Bytes_usage_on_worker.png'
+    fig_title = 'Private Bytes Usage (Worker) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Private_Bytes_usage_on_worker.png'
     divide_base = 1024*1024
 elif args.resource == 'working_set_s':
     resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby)\\Working Set'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Working Set (MB)'
     ylimit = 100
-    fig_title = 'Working Set Usage (Supervisor)'
-    fig_name = 'Working_Set_usage_on_supervisor.png'
+    fig_title = 'Working Set Usage (Supervisor) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Working_Set_usage_on_supervisor.png'
     divide_base = 1024*1024
 elif args.resource == 'working_set_w':
     resource_key = '\\\\FLUENTD-WINSERV\\Process(ruby#1)\\Working Set'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Working Set (MB)'
     ylimit = 100
-    fig_title = 'Working Set Usage (Worker)'
-    fig_name = 'Working_Set_usage_on_worker.png'
+    fig_title = 'Working Set Usage (Worker) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Working_Set_usage_on_worker.png'
     divide_base = 1024*1024
 elif args.resource == 'sent_bytes':
     resource_key = '\\\\FLUENTD-WINSERV\\Network Interface(AWS PV Network Device _0)\\Bytes Sent/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Bytes Sent (KiB/sec)'
     ylimit = 3500
-    fig_title = 'Bytes Sent Usage'
-    fig_name = 'Bytes_Sent_usage.png'
+    fig_title = 'Bytes Sent Usage -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Bytes_Sent_usage.png'
     divide_base = 1024
 elif args.resource == 'received_bytes':
     resource_key = '\\\\FLUENTD-WINSERV\\Network Interface(AWS PV Network Device _0)\\Bytes Received/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Bytes Received (KiB/sec)'
     ylimit = 2000
-    fig_title = 'Bytes Received Usage'
-    fig_name = 'Bytes_Received_usage.png'
+    fig_title = 'Bytes Received Usage -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Bytes_Received_usage.png'
     divide_base = 1024
 elif args.resource == 'disk_reads':
     resource_key = '\\\\FLUENTD-WINSERV\\PhysicalDisk(_Total)\\Disk Reads/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Disk Read (bytes/sec)'
     ylimit = 1000
-    fig_title = 'Disk Read Usage'
-    fig_name = 'Disk_Read_usage.png'
+    fig_title = 'Disk Read Usage -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Disk_Read_usage.png'
     divide_base = -1
 elif args.resource == 'disk_writes':
     resource_key = '\\\\FLUENTD-WINSERV\\PhysicalDisk(_Total)\\Disk Writes/sec'
     xlabel_message = 'message length (bytes)'
     ylabel_message = 'Disk Write (bytes/sec)'
     ylimit = 1000
-    fig_title = 'Disk Write Usage'
-    fig_name = 'Disk_Write_usage.png'
+    fig_title = 'Disk Write Usage -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Disk_Write_usage.png'
     divide_base = -1
 
 
@@ -121,12 +122,12 @@ else:
     base_path = args.base_path
 print(base_path)
 
-length_512 = pd.read_csv(os.path.join(base_path, '512-resource-usage.csv'), sep=',', na_values='.')
-length_1024 = pd.read_csv(os.path.join(base_path, '1024-resource-usage.csv'), sep=',', na_values='.')
-length_2048 = pd.read_csv(os.path.join(base_path, '2048-resource-usage.csv'), sep=',', na_values='.')
+length_512 = pd.read_csv(os.path.join(base_path, '512-' + args.package_name + '-resource-usage.csv'), sep=',', na_values='.')
+length_1024 = pd.read_csv(os.path.join(base_path, '1024-' + args.package_name + '-resource-usage.csv'), sep=',', na_values='.')
+length_2048 = pd.read_csv(os.path.join(base_path, '2048-' + args.package_name + '-resource-usage.csv'), sep=',', na_values='.')
 
 df = pd.DataFrame({
-    512: length_512[resource_key],
+    512:  length_512[resource_key],
     1024: length_1024[resource_key],
     2048: length_2048[resource_key],
 })
@@ -143,8 +144,8 @@ df_melt = pd.melt(df)
 print(df_melt.head())
 
 fig = plt.figure(figsize=(8, 6))
-plt.title(fig_title)
 f, ax = plt.subplots(figsize=(8, 6))
+ax.set_title(fig_title)
 ax.set_ylim(0, ylimit)
 plot = sns.boxplot(x='variable', y='value', data=df_melt, showfliers=False,
                    ax=ax, showmeans=True)
