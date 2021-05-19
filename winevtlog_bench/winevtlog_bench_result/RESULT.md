@@ -6,7 +6,7 @@
   * Windows Server 2019 on AWS t2.medium instance
   * [Benchmark tool](https://github.com/fluent-plugins-nursery/EventLogBencher) written in C#
 * Aggregator
-  * CentOS 8 on AWS t2.medium instance
+  * Ubuntu Focal (20.04 LTS) on AWS t2.medium instance
 
 ## Benchmark Scenario
 
