@@ -1,0 +1,17 @@
+- name: Remove fluentdwinsvc service
+  ansible.windows.win_service:
+    name: fluentdwinsvc
+    state: absent
+- name: Install td-agent
+  win_package:
+    path="http://packages.treasuredata.com.s3.amazonaws.com/4/windows/td-agent-{{ td_agent_version }}-x64.msi"
+    Product_Id="76dcb0b2-81ad-4a07-bf3b-1db567594171"
+    arguments="/q"
+  when: local_package == "no"
+- name: Copy collector configurations
+  win_copy:
+    src: "./config/{{ item }}"
+    dest: "C:\\opt\\td-agent\\{{ item }}"
+  with_items:
+    - fluent-collector.conf
+    - fluent-collector-with-tailing.conf

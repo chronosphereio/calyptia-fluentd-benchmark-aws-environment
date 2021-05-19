@@ -1,0 +1,26 @@
+- name: Remove fluentdwinsvc service
+  ansible.windows.win_service:
+    name: fluentdwinsvc
+    state: absent
+- name: Install calyptia-fluentd
+  win_package:
+    path="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd-{{ calyptia_fluentd_version }}-x64.msi"
+    Product_Id="89641f88-2289-42ff-aed0-e7b6ae6c0fe2"
+    arguments="/q"
+  when: local_package == "no"
+- name: Copy collector configurations
+  win_copy:
+    src: "./config/{{ item }}"
+    dest: "C:\\opt\\calyptia-fluentd\\{{ item }}"
+  with_items:
+    - fluent-collector.conf
+    - fluent-collector-with-tailing.conf
+- name: Check if fluentdwinsvc service is installed
+  win_service:
+    name: fluentdwinsvc
+  register: fluentdwinsvc_info
+- name: Stop fluentdwinsvc service
+  ansible.windows.win_service:
+    name: fluentdwinsvc
+    state: stopped
+  when: fluentdwinsvc_info.exists

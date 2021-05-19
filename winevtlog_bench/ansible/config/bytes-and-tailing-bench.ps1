@@ -1,16 +1,17 @@
 Param(
     [string]$workdir = "C:\tools",
     [int32]$Total = 1000,
+    [string]$PackageName = "calyptia-fluentd",
     [parameter(mandatory=$true)][int32]$Length,
     [parameter(mandatory=$true)][int32]$BatchSize,
     [parameter(mandatory=$true)][int32]$LineRate
  )
 
-$ENV:PATH="C:\opt\calyptia-fluentd\bin;" + $ENV:PATH
+$ENV:PATH="C:\opt\" + $PackageName + "\bin;" + $ENV:PATH
 
 cd $workdir
 
-Start-Process fluentd -ArgumentList "-c", "C:\opt\calyptia-fluentd\fluent-collector-with-tailing.conf", "-o", "C:\opt\calyptia-fluentd\message-$BatchSize-events-and-$LineRate-lines.log" -NoNewWindow -PassThru
+Start-Process fluentd -ArgumentList "-c", "C:\opt\$PackageName\fluent-collector-with-tailing.conf", "-o", "C:\opt\$PackageName\message-$PackageName-$BatchSize-events-and-$LineRate-lines.log" -NoNewWindow -PassThru
 
 while ($true) {
     $count = (Get-Process -Name ruby -ErrorAction SilentlyContinue).Count
@@ -28,9 +29,9 @@ while($true) {
     Start-Sleep 1
 }
 
-Start-Process typeperf -ArgumentList "-cf", "counters.txt", "-sc", "2400", "-si", "1" -PassThru -RedirectStandardOutput C:\tools\${BatchSize}events-${LineRate}lines-resource-usage.csv
+Start-Process typeperf -ArgumentList "-cf", "counters.txt", "-sc", "2400", "-si", "1" -PassThru -RedirectStandardOutput C:\tools\${PackageName}-${BatchSize}events-${LineRate}lines-resource-usage.csv
 
-$socket_count_job = Start-Process powershell -ArgumentList "-ExecutionPolicy", "RemoteSigned", C:\tools\socket-count.ps1 -PassThru -NoNewWindow -RedirectStandardOutput C:\tools\${BatchSize}events-${LineRate}lines-socket-usage.csv
+$socket_count_job = Start-Process powershell -ArgumentList "-ExecutionPolicy", "RemoteSigned", C:\tools\socket-count.ps1 -PassThru -NoNewWindow -RedirectStandardOutput C:\tools\${PackageName}-${BatchSize}events-${LineRate}lines-socket-usage.csv
 
 Start-Process C:\tools\EventLogBencher\EventLogBencher.exe -ArgumentList "batch", "-b", "$BatchSize", "-t", "$Total", "-l", "$Length" -PassThru -NoNewWindow
 

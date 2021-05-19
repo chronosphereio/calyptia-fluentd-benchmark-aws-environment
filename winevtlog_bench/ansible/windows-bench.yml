@@ -1,12 +1,12 @@
 ---
 - hosts: windows
   tasks:
-    - name: Run 512 bytes message length benchmark
-      win_shell: C:\tools\bytes-message-bench.ps1 -Length 512 -Total 120000
-    - name: Run 1024 bytes message length benchmark
-      win_shell: C:\tools\bytes-message-bench.ps1 -Length 1024 -Total 120000
-    - name: Run 2048 bytes message length benchmark
-      win_shell: C:\tools\bytes-message-bench.ps1 -Length 2048 -Total 120000
+    - name: Run 512 bytes message length benchmark with Calyptia-Fluentd
+      win_shell: C:\tools\bytes-message-bench.ps1 -Length 512 -Total 120000 -PackageName calyptia-fluentd
+    - name: Run 1024 bytes message length benchmark with Calyptia-Fluentd
+      win_shell: C:\tools\bytes-message-bench.ps1 -Length 1024 -Total 120000 -PackageName calyptia-fluentd
+    - name: Run 2048 bytes message length benchmark with Calyptia-Fluentd
+      win_shell: C:\tools\bytes-message-bench.ps1 -Length 2048 -Total 120000 -PackageName calyptia-fluentd
     - name: Find benchmarking result files
       win_find:
         paths: C:\tools\

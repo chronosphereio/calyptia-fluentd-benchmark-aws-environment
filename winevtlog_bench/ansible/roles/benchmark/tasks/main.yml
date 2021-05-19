@@ -1,0 +1,70 @@
+- name: Check EventLog benchmarking tool existence
+  win_stat:
+    path: C:\tools\EventLogBencher\EventLogBencher.exe
+  register: eventlog_bencher_check
+- name: Install EventLog benchmarking tool
+  win_get_url:
+    url: https://github.com/fluent-plugins-nursery/EventLogBencher/releases/download/{{ eventlog_bencher_version }}/EventLogBencher.zip
+    dest: C:\terraform\EventLogBencher.zip
+  when: not eventlog_bencher_check.stat.exists
+- name: Decompress EventLog benchmark tool zip file
+  win_unzip:
+    src: C:\terraform\EventLogBencher.zip
+    dest: C:\tools\EventLogBencher
+    delete_archive: yes
+  when: not eventlog_bencher_check.stat.exists
+- name: Check Appending file benchmarking tool existence
+  win_stat:
+    path: C:\tools\FileLoggingBencher\FileLoggingBencher.exe
+  register: appending_file_bencher_check
+- name: Install Appending file benchmarking tool
+  win_get_url:
+    url: https://github.com/fluent-plugins-nursery/EventLogBencher/releases/download/{{ eventlog_bencher_version }}/FileLoggingBencher.zip
+    dest: C:\terraform\FileLoggingBencher.zip
+  when: not appending_file_bencher_check.stat.exists
+- name: Decompress appending file benchmark tool zip file
+  win_unzip:
+    src: C:\terraform\FileLoggingBencher.zip
+    dest: C:\tools\FileLoggingBencher
+    delete_archive: yes
+  when: not appending_file_bencher_check.stat.exists
+- name: Check Process Explorer existence
+  win_stat:
+    path: C:\tools\procexp64.exe
+  register: proc_exp_check
+- name: Install Process Explorer tool
+  win_get_url:
+    url: https://download.sysinternals.com/files/ProcessExplorer.zip
+    dest: C:\terraform\ProcessExplorer.zip
+  when: not proc_exp_check.stat.exists
+- name: Decompress Process Explorer zip file
+  win_unzip:
+    src: C:\terraform\ProcessExplorer.zip
+    dest: C:\tools
+    delete_archive: yes
+  when: not proc_exp_check.stat.exists
+# Just for creating benchmark channel
+- name: Create Benchmark channel
+  win_shell: C:\tools\EventLogBencher\EventLogBencher.exe wait -w 0 -t 1 -l 512
+- name: Copy counters.txt
+  win_copy:
+    src: ./config/counters.txt
+    dest: C:\tools\counters.txt
+- name: Copy benchmark scripts
+  win_copy:
+    src: "./config/{{ item }}"
+    dest: "C:\\tools\\{{ item }}"
+  with_items:
+    - bytes-message-bench.ps1
+    - bytes-and-tailing-bench.ps1
+- name: Copy socket stat script
+  win_copy:
+    src: ./config/socket-count.ps1
+    dest: C:\tools\socket-count.ps1
+- name: Change the hostname to new_hostname
+  win_hostname:
+    name: fluentd-winserv
+  register: win_hostname
+- name: Reboot
+  win_reboot:
+  when: win_hostname.reboot_required

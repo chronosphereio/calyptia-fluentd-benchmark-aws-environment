@@ -1,0 +1,10 @@
+- name: Copy local modified version for testing
+  win_copy:
+    src: "{{ local_package }}"
+    dest: C:\calyptia-fluentd.msi
+  when: local_package != "no"
+- name: Install local calyptia-fluentd for testing
+  win_package:
+    path="c:\\calyptia-fluentd.msi"
+    arguments="/q"
+  when: local_package != "no"
