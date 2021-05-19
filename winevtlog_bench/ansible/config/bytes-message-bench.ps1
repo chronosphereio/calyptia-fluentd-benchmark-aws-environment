@@ -4,7 +4,6 @@ Param(
     [int32]$Total = 120000
 )
 
-$ENV:PATH="C:\opt\calyptia-fluentd\embedded\bin;" + $ENV:PATH
 $ENV:PATH="C:\opt\calyptia-fluentd\bin;" + $ENV:PATH
 
 cd $workdir
