@@ -34,6 +34,27 @@ local-package-provision:
 windows-bench:
 	ansible-playbook -i ./ansible/hosts ./ansible/windows-bench.yml
 
+visualize-line: visualize-line-cpu_s visualize-line-cpu_w visualize-line-private_bytes_s visualize-line-private_bytes_w visualize-line-working_set_s visualize-line-working_set_w
+
+
+visualize-line-cpu_s:
+	python3 visualize/plot_pandas_lineplot_Usage.py --resource cpu_s
+
+visualize-line-cpu_w:
+	python3 visualize/plot_pandas_lineplot_Usage.py --resource cpu_w
+
+visualize-line-private_bytes_s:
+	python3 visualize/plot_pandas_lineplot_Usage.py --resource private_bytes_s
+
+visualize-line-private_bytes_w:
+	python3 visualize/plot_pandas_lineplot_Usage.py --resource private_bytes_w
+
+visualize-line-working_set_s:
+	python3 visualize/plot_pandas_lineplot_Usage.py --resource working_set_s
+
+visualize-line-working_set_w:
+	python3 visualize/plot_pandas_lineplot_Usage.py --resource working_set_w
+
 visualize: visualize-cpu_s visualize-cpu_w visualize-private_bytes_s visualize-private_bytes_w visualize-working_set_s visualize-working_set_w visualize-sent_bytes visualize-received_bytes visualize-disk_reads visualize-disk_writes
 
 visualize-cpu_s:
