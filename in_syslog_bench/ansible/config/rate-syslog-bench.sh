@@ -1,11 +1,12 @@
 #!/bin/sh
 
-while getopts s:r: option
+while getopts s:r:n: option
 do
 case "${option}"
 in
 s) STEP=${OPTARG};;
 r) RATE=${OPTARG};;
+n) AGENT_NAME=${OPTARG};;
 esac
 done
 
@@ -13,6 +14,7 @@ usage() {
     echo "available options are:"
     echo "-s STEP (for set up total step(s))"
     echo "-r RATE (for set up generating line rate/sec)"
+    echo "-n AGENT_NAME (for specifying agent name: td-agent/calyptia-fluentd)"
     exit 1
 }
 
@@ -26,7 +28,12 @@ if [ -z $RATE ]; then
     usage
 fi
 
-sudo calyptia-fluentd -o calyptia-fluentd.log &
+if [ -z $AGENT_NAME ]; then
+    echo "specify agent name with -n AGENT_NAME."
+    usage
+fi
+
+sudo ${AGENT_NAME} -c ${HOME}/${AGENT_NAME}.conf -o ${AGENT_NAME}.log &
 
 sleep 3
 
@@ -34,8 +41,9 @@ if [ $RATE -gt 0 ]; then
     loggen --size 300 --rate ${RATE} --interval $(( 2*STEP )) -i 127.0.0.1 514 2> /dev/null &
 fi
 
-sudo python3.8 -u /usr/local/bin/monitor $STEP | tee usage-$RATE.tsv
+sudo python3.8 -u /usr/local/bin/monitor $STEP ${AGENT_NAME} | tee usage-$AGENT_NAME-$RATE.tsv
 
-sudo killall -TERM calyptia-fluentd
+sudo killall -TERM ruby
+sudo killall -TERM ${AGENT_NAME}
 
 exit 0
