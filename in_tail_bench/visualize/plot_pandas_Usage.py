@@ -40,7 +40,7 @@ elif args.resource == 'vms_s':
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
-    fig_title = 'VMS Usage (Supervisor)'
+    fig_title = 'VMS Usage (Supervisor) -- ' + args.package_name.title()
     fig_name = args.package_name.title() + '-VMS_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'cpu_w':
@@ -64,7 +64,7 @@ elif args.resource == 'vms_w':
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
-    fig_title = 'VMS Usage (Worker)'
+    fig_title = 'VMS Usage (Worker) -- ' + args.package_name.title()
     fig_name = args.package_name.title() + '-VMS_usage_on_worker.png'
     divide_base = -1
 elif args.resource == 'read_bytes':
