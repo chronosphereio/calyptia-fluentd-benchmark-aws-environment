@@ -31,9 +31,16 @@ jobs:
         run: cd ${{ matrix.bench }} && cp -f terraform.tfvars.sample terraform.tfvars && terraform init && terraform validate
       - name: Validate ansible ${{ matrix.bench }}
         if: matrix.bench != 'winevtlog_bench'
-        run: cd ${{ matrix.bench }} && ansible-lint ansible/collector.yml && ansible-lint ansible/aggregator.yml
+        run: |
+          cd ${{ matrix.bench }}
+          ansible-lint ansible/collector.yml
+          if [ -f ansible/aggregator.yml ]; then
+            ansible-lint ansible/aggregator.yml
+          fi
       - name: Validate ansible ${{ matrix.bench }}
         if: matrix.bench == 'winevtlog_bench'
         run: |
           ansible-galaxy collection install ansible.windows
-          cd ${{ matrix.bench }} && ansible-lint ansible/windows.yml && ansible-lint ansible/aggregator.yml
+          cd ${{ matrix.bench }}
+          ansible-lint ansible/windows.yml
+          ansible-lint ansible/aggregator.yml
