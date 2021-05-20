@@ -21,8 +21,10 @@ jobs:
         run: wget https://releases.hashicorp.com/terraform/${{ env.tf_version }}/terraform_${{ env.tf_version }}_linux_amd64.zip -O /tmp/terraform.zip
       - name: Install terraform
         run: sudo unzip -f -d /usr/local/bin/ /tmp/terraform.zip
-      - name: Install ansible
-        run: sudo apt install -y ansible ansible-lint
+      - name: Install python3
+        run: sudo apt install -y python3
+      - name: Install dependent libraries via pip3
+        run: sudo pip3 install -r requirements.txt
       - name: Copy public key
         run: cp -f ./tests/id_ecdsa_dummy_key.pub ./aws_key/id_rsa_aws.pub
       - name: Validate terraform
