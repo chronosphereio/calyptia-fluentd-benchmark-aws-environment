@@ -8,6 +8,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("steps", help="Total running seconds",
                     type=int)
+parser.add_argument("agent", help="Specify agent package name",
+                    type=str)
 args = parser.parse_args()
 
 
@@ -70,10 +72,10 @@ recv bytes(/sec)\tsend bytes(/sec)", end='\t')
 steps = 1
 RUBY = "ruby"
 # Linux's TASK_COMM_LEN is up to 15.
-CALYPTIA_FLUENTD = "calyptia-fluentd"[:15]
+AGENT_NAME = args.agent[:15]
 metrics = []
 ruby_process_count = 0
-td_agent_process_count = 0
+agent_process_count = 0
 io_metrics = IOMetrics()
 
 for proc in psutil.process_iter():
@@ -86,14 +88,14 @@ for proc in psutil.process_iter():
         print(f"{CPU:8}\t{RSS:8}\t{VMS:8}", end="\t")
         ruby_process_count = ruby_process_count + 1
 
-    if proc.name() == CALYPTIA_FLUENTD:
+    if proc.name() == AGENT_NAME:
         metric = ProcessMetrics(proc)
         metrics.append(metric)
-        CPU = "CPU Usage(%)[Calyptia-Fluent#{0}]".format(td_agent_process_count)
-        RSS = "RSS(MB)[Calyptia-Fluent#{0}]".format(td_agent_process_count)
-        VMS = "VMS(MB)[Calyptia-Fluent#{0}]".format(td_agent_process_count)
+        CPU = "CPU Usage(%)[{0}#{1}]".format(AGENT_NAME.title(), agent_process_count)
+        RSS = "RSS(MB)[{0}#{1}]".format(AGENT_NAME.title(), agent_process_count)
+        VMS = "VMS(MB)[{0}#{1}]".format(AGENT_NAME.title(), agent_process_count)
         print(f"{CPU:8}\t{RSS:8}\t{VMS:8}", end="\t")
-        td_agent_process_count = td_agent_process_count + 1
+        agent_process_count = agent_process_count + 1
 
 print("")
 

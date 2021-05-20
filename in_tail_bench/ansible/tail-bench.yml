@@ -1,16 +1,46 @@
 ---
 - hosts: collector
   tasks:
-    - name: Generating baseline tailing benchmark
-      shell: rate-tailing-bench -s 300 -r 0
-    - name: Generating 500 lines/sec tailing benchmark
-      shell: rate-tailing-bench -s 300 -r 500
-    - name: Generating 1000 lines/sec tailing benchmark
-      shell: rate-tailing-bench -s 300 -r 1000
-    - name: Generating 2000 lines/sec tailing benchmark
-      shell: rate-tailing-bench -s 300 -r 2000
-    - name: Generating 5000 lines/sec tailing benchmark
-      shell: rate-tailing-bench -s 300 -r 5000
+    - name: Generating baseline tailing benchmark w/ calyptia-fluentd
+      shell: rate-tailing-bench -s 300 -r 0 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: Generating 500 lines/sec tailing benchmark w/ calyptia-fluentd
+      shell: rate-tailing-bench -s 300 -r 500 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: Generating 1000 lines/sec tailing benchmark w/ calyptia-fluentd
+      shell: rate-tailing-bench -s 300 -r 1000 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: Generating 2000 lines/sec tailing benchmark w/ calyptia-fluentd
+      shell: rate-tailing-bench -s 300 -r 2000 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: Generating 5000 lines/sec tailing benchmark w/ calyptia-fluentd
+      shell: rate-tailing-bench -s 300 -r 5000 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: Generating baseline tailing benchmark w/ td-agent
+      shell: rate-tailing-bench -s 300 -r 0 -n td-agent
+      async: 1200
+      poll: 30
+    - name: Generating 500 lines/sec tailing benchmark w/ td-agent
+      shell: rate-tailing-bench -s 300 -r 500 -n td-agent
+      async: 1200
+      poll: 30
+    - name: Generating 1000 lines/sec tailing benchmark w/ td-agent
+      shell: rate-tailing-bench -s 300 -r 1000 -n td-agent
+      async: 1200
+      poll: 30
+    - name: Generating 2000 lines/sec tailing benchmark w/ td-agent
+      shell: rate-tailing-bench -s 300 -r 2000 -n td-agent
+      async: 1200
+      poll: 30
+    - name: Generating 5000 lines/sec tailing benchmark w/ td-agent
+      shell: rate-tailing-bench -s 300 -r 5000 -n td-agent
+      async: 1200
+      poll: 30
     - name: Find benchmarking result files
       find:
         paths: /home/{{ ansible_env.USER }}/
