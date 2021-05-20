@@ -217,6 +217,6 @@ Calyptia-Fluentd uses slightly more Working Set.
 * Worker Process
   * `in_tail` resource usage for flat file, which steadily growing with fixed flow rate, corresponds to:
      * Flow rate
-   * Calyptia-Fluentd's CPU usage is almost same, but slightly reduced memory usage in high loaded case (tailing 5000 lines/sec).
+   * Calyptia-Fluentd's CPU usage is almost same, but slightly reduced CPU usage in high loaded case (tailing 5000 lines/sec).
    * Calyptia-Fluentd's memory usage is lower than TD-Agent.
 * Supervisor process just monitors  life-and-death of worker process(es)
