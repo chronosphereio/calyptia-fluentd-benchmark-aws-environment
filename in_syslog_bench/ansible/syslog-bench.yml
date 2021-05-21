@@ -1,14 +1,38 @@
 ---
 - hosts: collector
   tasks:
-    - name: baseline syslog benchmark
-      shell: rate-syslog-bench -s 250 -r 0
-    - name: Generating 500 lines/sec syslog benchmark
-      shell: rate-syslog-bench -s 250 -r 500
-    - name: Generating 1000 lines/sec syslog benchmark
-      shell: rate-syslog-bench -s 250 -r 1000
-    - name: Generating 1500 lines/sec syslog benchmark
-      shell: rate-syslog-bench -s 250 -r 1500
+    - name: baseline syslog benchmark w/ calyptia-fluentd
+      shell: rate-syslog-bench -s 300 -r 0 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: Generating 500 lines/sec syslog benchmark w/ calyptia-fluentd
+      shell: rate-syslog-bench -s 300 -r 500 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: Generating 1000 lines/sec syslog benchmark w/ calyptia-fluentd
+      shell: rate-syslog-bench -s 300 -r 1000 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: Generating 1500 lines/sec syslog benchmark w/ calyptia-fluentd
+      shell: rate-syslog-bench -s 300 -r 1500 -n calyptia-fluentd
+      async: 1200
+      poll: 30
+    - name: baseline syslog benchmark w/ td-agent
+      shell: rate-syslog-bench -s 300 -r 0 -n td-agent
+      async: 1200
+      poll: 30
+    - name: Generating 500 lines/sec syslog benchmark w/ td-agent
+      shell: rate-syslog-bench -s 300 -r 500 -n td-agent
+      async: 1200
+      poll: 30
+    - name: Generating 1000 lines/sec syslog benchmark w/ td-agent
+      shell: rate-syslog-bench -s 300 -r 1000 -n td-agent
+      async: 1200
+      poll: 30
+    - name: Generating 1500 lines/sec syslog benchmark w/ td-agent
+      shell: rate-syslog-bench -s 300 -r 1500 -n td-agent
+      async: 1200
+      poll: 30
     - name: Find benchmarking result files
       find:
         paths: /home/{{ ansible_env.USER }}/

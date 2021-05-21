@@ -16,87 +16,88 @@ parser.add_argument('--resource',
                              'read_bytes', 'write_bytes',
                              'recv_bytes', 'send_bytes'],
                     default='cpu')
+parser.add_argument('--package-name', default="calyptia-fluentd")
 args = parser.parse_args()
 
 if args.resource == 'cpu_s':
-    resource_key = "CPU Usage(%)[Calyptia-Fluentd#0]"
+    resource_key = "CPU Usage(%)[" + args.package_name.title()[:15] + "#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
-    fig_title = 'CPU Usage (Supervisor)'
-    fig_name = 'CPU_usage_on_supervisor.png'
+    fig_title = 'CPU Usage (Supervisor) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-CPU_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'rss_s':
-    resource_key = "RSS(MB)[Calyptia-Fluentd#0]"
+    resource_key = "RSS(MB)[" + args.package_name.title()[:15] + "#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'RSS Usage (MB) '
     ylimit = 100
-    fig_title = 'RSS Usage (Supervisor)'
-    fig_name = 'RSS_usage_on_supervisor.png'
+    fig_title = 'RSS Usage (Supervisor) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-RSS_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'vms_s':
-    resource_key = "VMS(MB)[Calyptia-Fluentd#0]"
+    resource_key = "VMS(MB)[" + args.package_name.title()[:15] + "#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
-    fig_title = 'VMS Usage (Supervisor)'
-    fig_name = 'VMS_usage_on_supervisor.png'
+    fig_title = 'VMS Usage (Supervisor) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-VMS_usage_on_supervisor.png'
     divide_base = -1
 elif args.resource == 'cpu_w':
     resource_key = "CPU Usage(%)[Ruby#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
-    fig_title = 'CPU Usage (Worker)'
-    fig_name = 'CPU_usage_on_worker.png'
+    fig_title = 'CPU Usage (Worker) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-CPU_usage_on_worker.png'
     divide_base = -1
 elif args.resource == 'rss_w':
     resource_key = "RSS(MB)[Ruby#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'RSS Usage (MB) '
-    ylimit = 100
-    fig_title = 'RSS Usage (Worker)'
-    fig_name = 'RSS_usage_on_worker.png'
+    ylimit = 200
+    fig_title = 'RSS Usage (Worker) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-RSS_usage_on_worker.png'
     divide_base = -1
 elif args.resource == 'vms_w':
     resource_key = "VMS(MB)[Ruby#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
-    fig_title = 'VMS Usage (Worker)'
-    fig_name = 'VMS_usage_on_worker.png'
+    fig_title = 'VMS Usage (Worker) -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-VMS_usage_on_worker.png'
     divide_base = -1
 elif args.resource == 'read_bytes':
     resource_key = "read bytes(KiB/sec)"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'Disk Read Usage (bytes)'
     ylimit = 2500
-    fig_title = 'Disk Read Usage'
-    fig_name = 'Disk_Read_usage.png'
+    fig_title = 'Disk Read Usage -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Disk_Read_usage.png'
     divide_base = -1
 elif args.resource == 'write_bytes':
     resource_key = "write bytes(KiB/sec)"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'Disk Write Usage (KiB)'
     ylimit = 3500
-    fig_title = 'Disk Write Usage'
-    fig_name = 'Disk_Write_usage.png'
+    fig_title = 'Disk Write Usage -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Disk_Write_usage.png'
     divide_base = -1
 elif args.resource == 'recv_bytes':
     resource_key = "recv bytes(/sec)"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'Receive Usage (Bytes)'
     ylimit = 450000
-    fig_title = 'Receive Bytes Usage'
-    fig_name = 'Receive_Bytes_usage.png'
+    fig_title = 'Receive Bytes Usage -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Receive_Bytes_usage.png'
     divide_base = -1
 elif args.resource == 'send_bytes':
     resource_key = "send bytes(/sec)"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'Send Usage (Bytes)'
     ylimit = 3000000
-    fig_title = 'Send Bytes Usage'
-    fig_name = 'Send_Bytes_usage.png'
+    fig_title = 'Send Bytes Usage -- ' + args.package_name.title()
+    fig_name = args.package_name.title() + '-Send_Bytes_usage.png'
     divide_base = -1
 
 pwd = os.path.dirname(os.path.realpath(__file__))
@@ -129,10 +130,10 @@ sns.set_palette('Set3')
 base_path = os.path.join(pwd, '..', "ansible", "output", collector, "home", username)
 print(base_path)
 
-rate_0    = pd.read_csv(os.path.join(base_path, 'usage-0.tsv'), sep='\t', na_values='.')
-rate_500  = pd.read_csv(os.path.join(base_path, 'usage-500.tsv'), sep='\t', na_values='.')
-rate_1000 = pd.read_csv(os.path.join(base_path, 'usage-1000.tsv'), sep='\t', na_values='.')
-rate_1500 = pd.read_csv(os.path.join(base_path, 'usage-1500.tsv'), sep='\t', na_values='.')
+rate_0    = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-0.tsv'), sep='\t', na_values='.')
+rate_500  = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-500.tsv'), sep='\t', na_values='.')
+rate_1000 = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-1000.tsv'), sep='\t', na_values='.')
+rate_1500 = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-1500.tsv'), sep='\t', na_values='.')
 
 df = pd.DataFrame({
     0: rate_0[resource_key],
@@ -153,8 +154,8 @@ print(medians)
 df_melt = pd.melt(df)
 print(df_melt.head())
 
-plt.title(fig_title)
 fig, ax = plt.subplots(figsize=(8, 6))
+ax.set_title(fig_title)
 ax.set_ylim(0, ylimit)
 plot = sns.boxplot(x='variable', y='value', data=df_melt, showfliers=False, ax=ax, showmeans=True)
 plot.set(

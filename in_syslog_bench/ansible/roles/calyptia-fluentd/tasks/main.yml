@@ -1,0 +1,36 @@
+- name: install Calyptia-Fluentd GPG key
+  become: yes
+  rpm_key:
+    state: present
+    key: https://calyptia-fluentd.s3.us-east-2.amazonaws.com/GPG-KEY-calyptia-fluentd.asc
+- name: Check if calyptia-fluentd is installed
+  command: rpm -ql calyptia-fluentd
+  register: calyptia_fluentd_check_rpm
+  failed_when: calyptia_fluentd_check_rpm.rc > 1
+  changed_when: calyptia_fluentd_check_rpm.rc == 1
+- name: Download calyptia-fluentd
+  get_url:
+    url="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd-1.0.0-1.el8.x86_64.rpm"
+    dest="/home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm"
+  when: calyptia_fluentd_check_rpm.rc == 1
+- name: Install calyptia-fluentd
+  become: true
+  shell: |
+    rpm -ivh --replacefiles /home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm
+  when: calyptia_fluentd_check_rpm.rc == 1
+- name: Copy collector configuration
+  become: true
+  copy:
+    src: ./config/fluent-collector.conf
+    dest: /home/{{ ansible_env.USER }}/calyptia-fluentd.conf
+- name: Copy certificates
+  become: true
+  copy:
+    src: ./config/certs/ca_cert.pem
+    dest: /etc/ssl/certs/ca_cert.pem
+- name: Make sure a calyptia-fluentd service is stopped
+  become: true
+  systemd:
+    state: stopped
+    daemon_reload: yes
+    name: calyptia-fluentd
