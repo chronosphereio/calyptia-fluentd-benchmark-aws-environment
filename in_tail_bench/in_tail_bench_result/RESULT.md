@@ -205,11 +205,11 @@ When using Calyptia-Fluentd, RSS usage is declined against using Td-Agent with s
 
 VMS usages on supervisor are almost same in both of agents.
 
-#### Private Bytes Set usage -- Worker
+#### VMS usage -- Worker
 
 ![Compare with VMS Set usage on supervisor](LinePlot-VMS_usage_on_worker.png)
 
-Working Set usages on worker denote the same tendency per agents (td-agent vs. calyptia-fluentd).
+VMS usages on worker denote the same tendency per agents (td-agent vs. calyptia-fluentd).
 Calyptia-Fluentd uses slightly more Working Set.
 
 ## Conclusion
