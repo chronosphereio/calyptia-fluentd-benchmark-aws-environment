@@ -238,4 +238,5 @@ Td-Agent uses slightly more Working Set.
      * Flow rate
    * Calyptia-Fluentd's CPU usage is almost same, but slightly more consumption CPU usage in high loaded case (ingesting 1500 messages/sec).
    * Calyptia-Fluentd's memory usage is lower than TD-Agent.
+   * `in_syslog` has not many line of counts for Ruby script. So, upgrading to Ruby 3.0 doesn't reduced CPU usage.
 * Supervisor process just monitors  life-and-death of worker process(es)
