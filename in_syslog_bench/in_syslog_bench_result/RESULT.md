@@ -1,4 +1,4 @@
-# in_tail benchmark results
+# in_syslog benchmark results
 
 ## Environment
 
