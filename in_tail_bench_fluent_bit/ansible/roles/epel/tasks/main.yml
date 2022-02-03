@@ -1,0 +1,10 @@
+- name: install EPEL GPG key
+  become: yes
+  rpm_key:
+    state: present
+    key: "https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8"
+- name: Enable EPEL
+  become: true
+  yum:
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+    state: present

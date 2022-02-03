@@ -1,0 +1,6 @@
+---
+- hosts: collector
+  roles:
+    - td-agent-bit
+    - epel
+    - benchmark
