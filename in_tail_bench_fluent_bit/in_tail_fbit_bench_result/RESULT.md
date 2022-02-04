@@ -15,7 +15,7 @@
   * 10000 lines/sec
   * 100000 lines/sec
   * 300000 lines/sec
-* Generate logs with `run_log_generator.py`
+* Generate logs with `run_log_generator.py` which is taken from https://github.com/calyptia/fluent-bit-ci/blob/main/scripts/run_log_generator.py
 
 ## Fluentd Configurations for benchmarking
 
