@@ -8,8 +8,12 @@
   copy:
     src: ./config/td-agent-bit.repo
     dest: /etc/yum.repos.d/td-agent-bit.repo
+    mode: 0644
 - name: Check if td-agent-bit is installed
-  command: rpm -ql td-agent-bit
+  yum:
+    name: td-agent-bit
+    state: installed
+  check_mode: true
   register: td_agent_bit_check_rpm
   failed_when: td_agent_bit_check_rpm.rc > 1
   changed_when: td_agent_bit_check_rpm.rc == 1
@@ -24,6 +28,7 @@
   copy:
     src: ./config/td-agent-bit.conf
     dest: /home/{{ ansible_env.USER }}/td-agent-bit.conf
+    mode: 0644
 - name: Make sure a td-agent-bit service is stopped
   become: true
   systemd:

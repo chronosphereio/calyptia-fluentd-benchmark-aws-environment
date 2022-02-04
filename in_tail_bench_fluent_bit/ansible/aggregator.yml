@@ -5,6 +5,7 @@
       copy:
         src: ./config/https-benchmark-server.tar.gz
         dest: /home/{{ ansible_env.USER }}/https-benchmark-server.tar.gz
+        mode: 0644
     - name: https-benchmark-server location directory
       become: true
       file: path=/opt/https-benchmark-server state=directory owner=root group=root mode=0755
@@ -19,12 +20,11 @@
       copy:
         src: ./config/https-benchmark-server.service
         dest: /usr/lib/systemd/system/
-    - name: systemd daemon-reload
-      command: systemctl daemon-reload
-      become: yes
+        mode: 0644
     - name: start https-benchmark-server as simple service
       become: yes
       systemd:
         name: https-benchmark-server
         state: started
+        daemon_reload: yes
         enabled: true
