@@ -7,20 +7,25 @@ jobs:
 
     name: Lint ${{ matrix.bench }}
     runs-on: ${{ matrix.os }}
-    env:
-      tf_version: 0.15.1
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        bench: [winevtlog_bench, in_tail_bench, in_syslog_bench, in_sample_systemlog]
+        bench:
+          - winevtlog_bench
+          - in_tail_bench
+          - in_syslog_bench
+          - in_sample_systemlog
+          - in_tail_bench_fluent_bit
 
     steps:
       - uses: actions/checkout@v2
-      - name: Download terraform
-        run: wget https://releases.hashicorp.com/terraform/${{ env.tf_version }}/terraform_${{ env.tf_version }}_linux_amd64.zip -O /tmp/terraform.zip
       - name: Install terraform
-        run: sudo unzip -f -d /usr/local/bin/ /tmp/terraform.zip
+        run: |
+          sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+          sudo apt-add-repository -y "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+          sudo apt-get update && sudo apt-get install -y terraform
       - name: Install python3
         run: sudo apt install -y python3
       - name: Install dependent libraries via pip3
