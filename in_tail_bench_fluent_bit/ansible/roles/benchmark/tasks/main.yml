@@ -1,0 +1,39 @@
+- name: Install Python libraries
+  become: true
+  yum:
+    name:
+      - python38-pip
+      - python38-setuptools
+    state: present
+- name: Install python3-psutil package
+  become: true
+  pip:
+    executable: pip3
+    name:
+      - psutil
+- name: Copy monitoring script
+  become: true
+  copy:
+    src: ./config/monitor.py
+    dest: /usr/local/bin/monitor
+    mode: 0755
+- name: Copy log generating script
+  become: true
+  copy:
+    src: ./config/run_log_generator.py
+    dest: /usr/local/bin/run_log_generator.py
+    mode: 0755
+- name: Copy benchmarking script
+  become: true
+  copy:
+    src: ./config/rate-tailing-bench.sh
+    dest: /usr/local/bin/rate-tailing-bench
+    mode: 0755
+- name: Adjust directory ownership
+  become: true
+  file:
+    path: /data
+    state: directory
+    owner: '{{ ansible_env.USER }}'
+    group: '{{ ansible_env.USER }}'
+    mode: 0775

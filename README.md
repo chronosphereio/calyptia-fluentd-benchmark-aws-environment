@@ -13,7 +13,7 @@ Calyptia Fluentd Benchmark AWS Environment with Terraform
 
 ## Setup
 
- 1. Prepare RSA public key and put it into `aws_key/id_rsa_aws.pub`.
+ 1. Prepare RSA public key.
  2. Change directory to target environments(winevtlog_bench/in_tail_bench).
  3. Specify user-defined variables in `terraform.tfvars` which can be copied from `terraform.tfvars.sample` and fill them for each environment (winevtlog\_bench, in\_tail\_bench).
 

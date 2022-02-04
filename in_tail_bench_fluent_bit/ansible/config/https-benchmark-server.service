@@ -1,0 +1,16 @@
+[Unit]
+Description=HTTP Benchmarking Server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/https-benchmark-server
+ExecStart=/opt/https-benchmark-server/https-benchmark-server -printmetrics=false -printrecords=false
+ExecStop=/bin/kill -TERM ${MAINPID}
+ExecReload=/bin/kill -HUP ${MAINPID}
+Restart=always
+TimeoutStopSec=120
+
+[Install]
+WantedBy=multi-user.target
