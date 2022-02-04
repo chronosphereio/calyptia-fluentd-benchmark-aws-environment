@@ -10,13 +10,11 @@
     dest: /etc/yum.repos.d/td-agent-bit.repo
     mode: 0644
 - name: Check if td-agent-bit is installed
+  become: true
   yum:
     name: td-agent-bit
     state: installed
   check_mode: true
-  register: td_agent_bit_check_rpm
-  failed_when: td_agent_bit_check_rpm.rc > 1
-  changed_when: td_agent_bit_check_rpm.rc == 1
 - name: Install td-agent-bit
   become: true
   yum:
