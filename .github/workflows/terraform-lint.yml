@@ -28,8 +28,12 @@ jobs:
           sudo apt-get update && sudo apt-get install -y terraform
       - name: Install python3
         run: sudo apt install -y python3
+      - name: Create venv
+        run: |
+          python3 -m venv management
+          source management/bin/activate
       - name: Install dependent libraries via pip3
-        run: sudo pip3 install -r requirements.txt
+        run: pip3 install -r requirements.txt
       - name: Copy public key
         run: cp -f ./tests/id_ecdsa_dummy_key.pub ./aws_key/id_rsa_aws.pub
       - name: Validate terraform
