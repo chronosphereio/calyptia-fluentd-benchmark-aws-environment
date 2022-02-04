@@ -4,7 +4,7 @@
     state: present
     key: https://calyptia-fluentd.s3.us-east-2.amazonaws.com/GPG-KEY-calyptia-fluentd.asc
 - name: Check if calyptia-fluentd is installed
-  command: rpm -ql calyptia-fluentd
+  command: rpm -ql calyptia-fluentd # noqa 303
   register: calyptia_fluentd_check_rpm
   failed_when: calyptia_fluentd_check_rpm.rc > 1
   changed_when: calyptia_fluentd_check_rpm.rc == 1
@@ -13,7 +13,7 @@
     url="https://{{ calyptia_fluentd_repo }}/calyptia-fluentd-1.0.0-1.el8.x86_64.rpm"
     dest="/home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm"
   when: calyptia_fluentd_check_rpm.rc == 1
-- name: Install calyptia-fluentd
+- name: Install calyptia-fluentd # noqa 303
   become: true
   shell: |
     rpm -ivh --replacefiles /home/{{ ansible_env.USER }}/calyptia-fluentd-{{ calyptia_fluentd_version }}.el8.x86_64.rpm
