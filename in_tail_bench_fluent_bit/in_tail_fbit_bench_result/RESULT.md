@@ -17,7 +17,7 @@
   * 300000 lines/sec
 * Generate logs with `run_log_generator.py` which is taken from https://github.com/calyptia/fluent-bit-ci/blob/main/scripts/run_log_generator.py
 
-## Fluentd Configurations for benchmarking
+## Fluent Bit Configurations for benchmarking
 
 ### Collector configuration
 
@@ -91,7 +91,6 @@ This plot uses actual values of RSS.
 
 ![Td Agent Bit VMS Usage](Td-Agent-Bit-VMS_usage.png)
 
-VMS usage of Fluentd supervisor is almost same.
 This plot uses actual values of VMS.
 
 ### Results -- Lineplot
