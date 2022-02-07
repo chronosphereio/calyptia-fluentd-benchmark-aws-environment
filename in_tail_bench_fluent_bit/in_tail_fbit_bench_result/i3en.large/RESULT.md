@@ -3,9 +3,9 @@
 ## Environment
 
 * Collector
-  * Rocky Linux 8 on AWS t2.medium instance with gp3 SSD EBS volume that is mounted on `/data`.
+  * Rocky Linux 8 on AWS _i3en.large_ instance with gp3 SSD EBS volume that is mounted on `/data`.
 * Aggregator
-  * Rocky Linux 8 on AWS t2.medium instance
+  * Rocky Linux 8 on AWS _i3en.large_ instance
 
 ## Benchmark Scenario
 
@@ -67,7 +67,6 @@ in_tail ------> out_http -----> [aggregator node]
 ### Aggregator configuration
 
 Received HTTP requests with https-benchmark-server (included binary tarball).
-
 
 ### Results -- Lineplot
 

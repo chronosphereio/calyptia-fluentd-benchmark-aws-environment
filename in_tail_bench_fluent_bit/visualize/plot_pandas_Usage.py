@@ -48,7 +48,7 @@ elif args.resource == 'read_bytes':
     resource_key = "read bytes(KiB/sec)"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'Disk Read Usage (bytes)'
-    ylimit = 30000
+    ylimit = 50000
     fig_title = 'Disk Read Usage -- ' + args.package_name.title()
     fig_name = args.package_name.title() + '-Disk_Read_usage.png'
     divide_base = -1
