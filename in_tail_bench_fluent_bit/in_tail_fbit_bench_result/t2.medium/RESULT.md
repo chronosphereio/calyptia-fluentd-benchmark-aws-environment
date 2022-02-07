@@ -4,6 +4,7 @@
 
 * Collector
   * Rocky Linux 8 on AWS _t2.medium_ instance with gp3 SSD EBS volume that is mounted on `/data`.
+  * Fluent Bit v1.8.12
 * Aggregator
   * Rocky Linux 8 on AWS _t2.medium_ instance
 
