@@ -95,6 +95,7 @@ resource "aws_instance" "collector" {
       "${path.module}/script.sh.tpl",
       {
         "connecting_user": var.environment == "rhel" ? "ec2-user" : "rocky"
+        "mount_point": var.instance_type == "i3en.large" ? "/dev/nvme1n1" : "/dev/xvdf"
       }
     )
   }
