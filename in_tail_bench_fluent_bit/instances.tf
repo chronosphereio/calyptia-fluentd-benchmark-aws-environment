@@ -47,7 +47,7 @@ resource "aws_key_pair" "fluent_bit" {
 
 resource "aws_instance" "aggregator" {
   ami                         = var.environment == "rhel" ? data.aws_ami.rhel8.id : data.aws_ami.rocky8.id
-  instance_type               = "t2.medium"
+  instance_type               = var.instance_type
   subnet_id                   = aws_subnet.public.id
   private_ip                  = "10.1.4.4"
   associate_public_ip_address = true
@@ -66,7 +66,7 @@ resource "aws_instance" "aggregator" {
 
 resource "aws_instance" "collector" {
   ami                         = var.environment == "rhel" ? data.aws_ami.rhel8.id : data.aws_ami.rocky8.id
-  instance_type               = "t2.medium"
+  instance_type               = var.instance_type
   subnet_id                   = aws_subnet.public.id
   private_ip                  = "10.1.4.5"
   associate_public_ip_address = true
@@ -95,6 +95,7 @@ resource "aws_instance" "collector" {
       "${path.module}/script.sh.tpl",
       {
         "connecting_user": var.environment == "rhel" ? "ec2-user" : "rocky"
+        "mount_point": var.instance_type == "i3en.large" ? "/dev/nvme1n1" : "/dev/xvdf"
       }
     )
   }
