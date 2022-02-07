@@ -68,30 +68,6 @@ in_tail ------> out_http -----> [aggregator node]
 
 Received HTTP requests with https-benchmark-server (included binary tarball).
 
-## Results -- Boxplots
-
-### td-agent-bit
-
-#### CPU usage
-
-![Td Agent Bit CPU Usage](Td-Agent-Bit-CPU_usage.png)
-
-CPU usage of td-agent-bit worker corresponds to flow rate.
-300000 lines / sec seems to be saturated for processing?
-(This plot does not adjust with CPU counts.)
-
-#### RSS usage
-
-![Td Agent Bit RSS Usage](Td-Agent-Bit-RSS_usage.png)
-
-RSS usage of td-agent-bit supervisor is almost same.
-This plot uses actual values of RSS.
-
-#### VMS usage
-
-![Td Agent Bit VMS Usage](Td-Agent-Bit-VMS_usage.png)
-
-This plot uses actual values of VMS.
 
 ### Results -- Lineplot
 
@@ -123,3 +99,34 @@ CPU usages correspond to flow rate.
      * Flow rate
    * Fluent Bit's CPU usage is corresponding to flow rate, but slightly reduced CPU usage in high loaded case (tailing 300000 lines/sec). This might be indicated that 300000 lines / sec case is saturated for processing.
    * Fluent Bit's memory foot print is almost lower than 300MB event if highly loaded case. Median of memory usage is around 100 MB.
+
+
+### Appendix
+
+Reading tendency of resource usages from Line plot is a bit of hard. Using box plot makes easier to comprehension about them.
+Within a box, resource usage is from 25 percentile to 75 percentile.
+
+## Results -- Boxplots
+
+### fluent-bit
+
+#### CPU usage
+
+![Fluent Bit CPU Usage](Fluent-Bit-CPU_usage.png)
+
+CPU usage of fluent-bit process corresponds to flow rate.
+300000 lines / sec seems to be saturated for processing?
+(This plot does not adjust with CPU counts.)
+
+#### RSS usage
+
+![Fluent Bit RSS Usage](Fluent-Bit-RSS_usage.png)
+
+RSS usage of fluent-bit supervisor is almost same.
+This plot uses actual values of RSS.
+
+#### VMS usage
+
+![Fluent Bit VMS Usage](Fluent-Bit-VMS_usage.png)
+
+This plot uses actual values of VMS.

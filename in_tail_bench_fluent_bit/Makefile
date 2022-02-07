@@ -1,4 +1,4 @@
-FLUENT_BIT_PACKAGE_NAME ?= "td-agent-bit"
+FLUENT_BIT_PACKAGE_NAME ?= "fluent-bit"
 
 .PHONY: all
 

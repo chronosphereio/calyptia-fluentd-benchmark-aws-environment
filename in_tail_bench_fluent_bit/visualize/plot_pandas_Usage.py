@@ -16,11 +16,12 @@ parser.add_argument('--resource',
                              'read_bytes', 'write_bytes',
                              'recv_bytes', 'send_bytes'],
                     default='cpu')
-parser.add_argument('--package-name', default="td-agent-bit")
+parser.add_argument('--process-name', default="td-agent-bit")
+parser.add_argument('--package-name', default="fluent-bit")
 args = parser.parse_args()
 
 if args.resource == 'cpu':
-    resource_key = "CPU Usage(%)[" + args.package_name.title()[:15] + "#0]"
+    resource_key = "CPU Usage(%)[" + args.process_name.title()[:15] + "#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 100
@@ -28,7 +29,7 @@ if args.resource == 'cpu':
     fig_name = args.package_name.title() + '-CPU_usage.png'
     divide_base = -1
 elif args.resource == 'rss':
-    resource_key = "RSS(MB)[" + args.package_name.title()[:15] + "#0]"
+    resource_key = "RSS(MB)[" + args.process_name.title()[:15] + "#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'RSS Usage (MB) '
     ylimit = 500
@@ -36,7 +37,7 @@ elif args.resource == 'rss':
     fig_name = args.package_name.title() + '-RSS_usage.png'
     divide_base = -1
 elif args.resource == 'vms':
-    resource_key = "VMS(MB)[" + args.package_name.title()[:15] + "#0]"
+    resource_key = "VMS(MB)[" + args.process_name.title()[:15] + "#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
@@ -105,11 +106,11 @@ sns.set_palette('Set3')
 base_path = os.path.join(pwd, '..', "ansible", "output", collector, "home", username)
 print(base_path)
 
-rate_0    = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-0.tsv'), sep='\t', na_values='.')
-rate_5000  = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-5000.tsv'), sep='\t', na_values='.')
-rate_10000 = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-10000.tsv'), sep='\t', na_values='.')
-rate_100000 = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-100000.tsv'), sep='\t', na_values='.')
-rate_300000 = pd.read_csv(os.path.join(base_path, 'usage-'+ args.package_name + '-300000.tsv'), sep='\t', na_values='.')
+rate_0    = pd.read_csv(os.path.join(base_path, 'usage-'+ args.process_name + '-0.tsv'), sep='\t', na_values='.')
+rate_5000  = pd.read_csv(os.path.join(base_path, 'usage-'+ args.process_name + '-5000.tsv'), sep='\t', na_values='.')
+rate_10000 = pd.read_csv(os.path.join(base_path, 'usage-'+ args.process_name + '-10000.tsv'), sep='\t', na_values='.')
+rate_100000 = pd.read_csv(os.path.join(base_path, 'usage-'+ args.process_name + '-100000.tsv'), sep='\t', na_values='.')
+rate_300000 = pd.read_csv(os.path.join(base_path, 'usage-'+ args.process_name + '-300000.tsv'), sep='\t', na_values='.')
 
 print(resource_key)
 

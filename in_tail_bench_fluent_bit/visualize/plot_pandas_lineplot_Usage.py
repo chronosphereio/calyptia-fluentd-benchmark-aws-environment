@@ -111,11 +111,11 @@ rate_100000 = pd.read_csv(os.path.join(base_path, 'usage-td-agent-bit-100000.tsv
 rate_300000 = pd.read_csv(os.path.join(base_path, 'usage-td-agent-bit-300000.tsv'), sep='\t', na_values='.')
 
 df = pd.DataFrame({
-    "0 line/sec (baseline) w/ td-agent-bit": rate_0[resource_key_format.format("td-agent-bit".title())],
-    "5000 lines/sec w/ td-agent-bit": rate_5000[resource_key_format.format("td-agent-bit".title())],
-    "10000 lines/sec w/ td-agent-bit": rate_10000[resource_key_format.format("td-agent-bit".title())],
-    "100000 lines/sec w/ td-agent-bit": rate_100000[resource_key_format.format("td-agent-bit".title())],
-    "300000 lines/sec w/ td-agent-bit": rate_300000[resource_key_format.format("td-agent-bit".title())],
+    "0 line/sec (baseline) w/ fluent-bit": rate_0[resource_key_format.format("td-agent-bit".title())],
+    "5000 lines/sec w/ fluent-bit": rate_5000[resource_key_format.format("td-agent-bit".title())],
+    "10000 lines/sec w/ fluent-bit": rate_10000[resource_key_format.format("td-agent-bit".title())],
+    "100000 lines/sec w/ fluent-bit": rate_100000[resource_key_format.format("td-agent-bit".title())],
+    "300000 lines/sec w/ fluent-bit": rate_300000[resource_key_format.format("td-agent-bit".title())],
 })
 if divide_base > 1:
     df = df_td.divide(divide_base)
