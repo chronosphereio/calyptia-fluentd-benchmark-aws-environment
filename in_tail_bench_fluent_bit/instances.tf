@@ -59,6 +59,10 @@ resource "aws_instance" "aggregator" {
 
   depends_on = [aws_internet_gateway.gw]
 
+  root_block_device {
+    delete_on_termination = "true"
+  }
+
   tags = {
     Name = "benchmarking on aggregator"
   }
@@ -77,6 +81,10 @@ resource "aws_instance" "collector" {
   availability_zone = var.availability-zone
 
   depends_on = [aws_internet_gateway.gw]
+
+  root_block_device {
+    delete_on_termination = "true"
+  }
 
   dynamic "ebs_block_device" {
     for_each = var.extra_block_devices
