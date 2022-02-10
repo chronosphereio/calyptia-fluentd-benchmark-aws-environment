@@ -22,7 +22,7 @@ if args.resource == 'cpu':
     resource_key_format = "CPU Usage(%)[{0}#0]"
     xlabel_message = 'steps'
     ylabel_message = 'CPU Usage (%)'
-    ylimit = 100
+    ylimit = 150
     fig_title = 'CPU Usage (Fluent Bit Process)'
     fig_name = 'LinePlot-CPU_usage.png'
     divide_base = -1

@@ -24,7 +24,7 @@ if args.resource == 'cpu':
     resource_key = "CPU Usage(%)[" + args.process_name.title()[:15] + "#0]"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'CPU Usage (%)'
-    ylimit = 100
+    ylimit = 150
     fig_title = 'CPU Usage (Fluent Bit Process) -- ' + args.package_name.title()
     fig_name = args.package_name.title() + '-CPU_usage.png'
     divide_base = -1
@@ -48,7 +48,7 @@ elif args.resource == 'read_bytes':
     resource_key = "read bytes(KiB/sec)"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'Disk Read Usage (bytes)'
-    ylimit = 50000
+    ylimit = 100000
     fig_title = 'Disk Read Usage -- ' + args.package_name.title()
     fig_name = args.package_name.title() + '-Disk_Read_usage.png'
     divide_base = -1
@@ -56,7 +56,7 @@ elif args.resource == 'write_bytes':
     resource_key = "write bytes(KiB/sec)"
     xlabel_message = 'flow rate (lines/second)'
     ylabel_message = 'Disk Write Usage (KiB)'
-    ylimit = 150000
+    ylimit = 1000000
     fig_title = 'Disk Write Usage -- ' + args.package_name.title()
     fig_name = args.package_name.title() + '-Disk_Write_usage.png'
     divide_base = -1

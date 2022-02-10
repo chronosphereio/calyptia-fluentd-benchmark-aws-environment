@@ -4,3 +4,4 @@ secret-access-key     = "YOURACCESSKEY"
 secret-key            = "YourSecretkey"
 ssh-private-key-path  = "/path/to/private_key"
 instance_type        = "t2.medium"
+# extra_block_devices  = [] # If you want to use ephemeral NVMe device, you should use empty array here.

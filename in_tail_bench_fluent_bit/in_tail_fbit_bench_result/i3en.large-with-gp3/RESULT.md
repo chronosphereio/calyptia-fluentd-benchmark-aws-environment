@@ -3,7 +3,7 @@
 ## Environment
 
 * Collector
-  * Rocky Linux 8 on AWS _i3en.large_ instance with ephemeral NVMe volume that is mounted on `/data`.
+  * Rocky Linux 8 on AWS _i3en.large_ instance with gp3 SSD EBS volume that is mounted on `/data`.
   * Fluent Bit v1.8.12
 * Aggregator
   * Rocky Linux 8 on AWS _i3en.large_ instance

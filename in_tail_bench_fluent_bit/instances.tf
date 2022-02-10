@@ -59,6 +59,10 @@ resource "aws_instance" "aggregator" {
 
   depends_on = [aws_internet_gateway.gw]
 
+  root_block_device {
+    delete_on_termination = "true"
+  }
+
   tags = {
     Name = "benchmarking on aggregator"
   }
@@ -78,10 +82,18 @@ resource "aws_instance" "collector" {
 
   depends_on = [aws_internet_gateway.gw]
 
-  ebs_block_device {
-    device_name = "/dev/xvdf"
-    volume_size = 100
-    volume_type = "gp3"
+  root_block_device {
+    delete_on_termination = "true"
+  }
+
+  dynamic "ebs_block_device" {
+    for_each = var.extra_block_devices
+    content {
+      delete_on_termination = "true"
+      device_name           = ebs_block_device.value.device_name
+      volume_type           = ebs_block_device.value.volume_type
+      volume_size           = ebs_block_device.value.volume_size
+    }
   }
 
   tags = {
@@ -95,7 +107,7 @@ resource "aws_instance" "collector" {
       "${path.module}/script.sh.tpl",
       {
         "connecting_user": var.environment == "rhel" ? "ec2-user" : "rocky"
-        "mount_point": var.instance_type == "i3en.large" ? "/dev/nvme1n1" : "/dev/xvdf"
+        "mount_point": (var.instance_type == "i3en.large" || var.instance_type == "i3en.2xlarge" ) ? "/dev/nvme1n1" : "/dev/xvdf"
       }
     )
   }
