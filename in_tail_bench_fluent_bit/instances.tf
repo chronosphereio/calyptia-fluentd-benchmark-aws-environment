@@ -78,11 +78,14 @@ resource "aws_instance" "collector" {
 
   depends_on = [aws_internet_gateway.gw]
 
-  ebs_block_device {
-    delete_on_termination = "true"
-    device_name           = "/dev/xvdf"
-    volume_size           = 100
-    volume_type           = "gp3"
+  dynamic "ebs_block_device" {
+    for_each = var.extra_block_devices
+    content {
+      delete_on_termination = "true"
+      device_name           = ebs_block_device.value.device_name
+      volume_type           = ebs_block_device.value.volume_type
+      volume_size           = ebs_block_device.value.volume_size
+    }
   }
 
   tags = {
