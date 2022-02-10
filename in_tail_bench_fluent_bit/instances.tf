@@ -79,9 +79,10 @@ resource "aws_instance" "collector" {
   depends_on = [aws_internet_gateway.gw]
 
   ebs_block_device {
-    device_name = "/dev/xvdf"
-    volume_size = 100
-    volume_type = "gp3"
+    delete_on_termination = "true"
+    device_name           = "/dev/xvdf"
+    volume_size           = 100
+    volume_type           = "gp3"
   }
 
   tags = {
@@ -95,7 +96,7 @@ resource "aws_instance" "collector" {
       "${path.module}/script.sh.tpl",
       {
         "connecting_user": var.environment == "rhel" ? "ec2-user" : "rocky"
-        "mount_point": var.instance_type == "i3en.large" ? "/dev/nvme1n1" : "/dev/xvdf"
+        "mount_point": (var.instance_type == "i3en.large" || var.instance_type == "i3en.2xlarge" ) ? "/dev/nvme1n1" : "/dev/xvdf"
       }
     )
   }
