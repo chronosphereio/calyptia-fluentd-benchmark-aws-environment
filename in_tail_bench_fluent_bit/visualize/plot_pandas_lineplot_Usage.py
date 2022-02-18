@@ -12,7 +12,7 @@ from ansible.inventory.manager import InventoryManager
 
 parser = argparse.ArgumentParser(description='Visualize data as plot')
 parser.add_argument('--resource',
-                    choices=['cpu', 'rss', 'vms',
+                    choices=['cpu', 'cpu-total', 'rss', 'vms',
                              'read_bytes', 'write_bytes',
                              'recv_bytes', 'send_bytes'],
                     default='cpu')
@@ -25,6 +25,14 @@ if args.resource == 'cpu':
     ylimit = 150
     fig_title = 'CPU Usage (Fluent Bit Process)'
     fig_name = 'LinePlot-CPU_usage.png'
+    divide_base = -1
+elif args.resource == 'cpu-total':
+    resource_key_format = "CPU Usage(%)[{0}#0]"
+    xlabel_message = 'seconds'
+    ylabel_message = 'CPU Usage (%) / Core number'
+    ylimit = 100
+    fig_title = 'CPU Usage (Fluent Bit Process)'
+    fig_name = 'LinePlot-CPU_usage-per-core-number.png'
     divide_base = -1
 elif args.resource == 'rss':
     resource_key_format = "RSS(MB)[{0}#0]"
@@ -95,6 +103,17 @@ if environment == "rhel":
 else:
     username = "rocky"
 
+if args.resource == 'cpu-total':
+    instance_type = tfvars["instance_type"].strip(" \"\n")
+    if instance_type == "t2.medium":
+        instance_cpus = 2
+    elif instance_type == "i3en.large":
+        instance_cpus = 2
+    elif instance_type == "i3en.2xlarge":
+        instance_cpus = 8
+
+    divide_base = instance_cpus
+
 print(collector)
 
 sns.set()
@@ -118,7 +137,7 @@ df = pd.DataFrame({
     "300000 lines/sec w/ fluent-bit": rate_300000[resource_key_format.format("td-agent-bit".title())],
 })
 if divide_base > 1:
-    df = df_td.divide(divide_base)
+    df = df.divide(divide_base)
 
 fig, ax = plt.subplots(figsize=(8, 6))
 ax.set_title(fig_title)

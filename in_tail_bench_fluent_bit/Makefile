@@ -24,11 +24,14 @@ aggregator-provision:
 tail-bench:
 	ansible-playbook -i ./ansible/hosts ./ansible/tail-bench.yml
 
-visualize-line: visualize-line-cpu visualize-line-vms visualize-line-rss
+visualize-line: visualize-line-cpu visualize-line-cpu-total visualize-line-vms visualize-line-rss
 
 
 visualize-line-cpu:
 	python3 visualize/plot_pandas_lineplot_Usage.py --resource cpu
+
+visualize-line-cpu-total:
+	python3 visualize/plot_pandas_lineplot_Usage.py --resource cpu-total
 
 visualize-line-vms:
 	python3 visualize/plot_pandas_lineplot_Usage.py --resource vms

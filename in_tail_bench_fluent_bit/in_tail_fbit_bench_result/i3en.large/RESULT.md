@@ -80,6 +80,21 @@ CPU usages correspond to flow rate.
 
 100 indicates that 1 core is fully used.
 
+#### CPU usage / Core numbers
+
+![Compare with CPU usage / Core numbers](LinePlot-CPU_usage-per-core-numbers.png)
+
+CPU usages correspond to flow rate.
+300000 lines / sec seems to be saturated for processing?
+
+This graph uses the values:
+
+CPU usages / Core numbers.
+
+If the collector instance has 2 Cores, 16 times lower than the previous graph.
+
+Total is 100.
+
 #### RSS usage
 
 ![Compare with RSS](LinePlot-RSS_usage.png)
