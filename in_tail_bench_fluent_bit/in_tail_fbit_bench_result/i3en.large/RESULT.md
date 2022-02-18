@@ -104,6 +104,10 @@ CPU usages correspond to flow rate.
 
 ### Flow rate with Prometheus graphs
 
+These metrics are collected on aggregator instance.
+
+And Prometheus is working on the aggregator instance.
+
 ### 0 lines/sec (baseline)
 
 ![](Fluent-Bit-0-lines-per-sec.png)

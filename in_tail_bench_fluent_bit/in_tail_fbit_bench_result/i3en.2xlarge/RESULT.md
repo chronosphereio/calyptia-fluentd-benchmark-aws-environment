@@ -69,6 +69,8 @@ in_tail ------> out_http -----> [aggregator node]
 
 Received HTTP requests with https-benchmark-server (included binary tarball).
 
+And Prometheus is working on the aggregator instance.
+
 ### Results -- Lineplot
 
 #### CPU usage
@@ -105,6 +107,8 @@ CPU usages correspond to flow rate.
    * Fluent Bit's memory foot print is almost lower than 300MB event if highly loaded case. Median of memory usage is around 100 MB.
 
 ### Flow rate with Prometheus graphs
+
+These metrics are collected on aggregator instance.
 
 ### 0 lines/sec (baseline)
 
