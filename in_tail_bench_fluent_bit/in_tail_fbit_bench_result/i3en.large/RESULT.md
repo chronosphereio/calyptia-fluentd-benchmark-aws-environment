@@ -78,6 +78,8 @@ Received HTTP requests with https-benchmark-server (included binary tarball).
 CPU usages correspond to flow rate.
 300000 lines / sec seems to be saturated for processing?
 
+100 indicates that 1 core is fully used.
+
 #### RSS usage
 
 ![Compare with RSS](LinePlot-RSS_usage.png)
