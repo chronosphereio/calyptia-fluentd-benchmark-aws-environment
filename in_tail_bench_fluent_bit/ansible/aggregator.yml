@@ -1,30 +1,71 @@
 ---
 - hosts: aggregator
+  vars:
+    - prometheus_version: "2.33.3"
   tasks:
     - name: Copy https-benchmark-server tarball
       copy:
         src: ./config/https-benchmark-server.tar.gz
         dest: /home/{{ ansible_env.USER }}/https-benchmark-server.tar.gz
         mode: 0644
+    - name: Download Prometheus
+      get_url:
+        url: https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz
+        dest: /home/{{ ansible_env.USER }}/prometheus-server.tar.gz
+        mode: 0644
     - name: https-benchmark-server location directory
       become: true
       file: path=/opt/https-benchmark-server state=directory owner=root group=root mode=0755
+    - name: prometheus-server location directory
+      become: true
+      file: path=/opt/src/prometheus-server state=directory owner=root group=root mode=0755
     - name: Unarchive https-benchmark-server tarball
       become: true
       unarchive:
         src: /home/{{ ansible_env.USER }}/https-benchmark-server.tar.gz
         dest: /opt/https-benchmark-server
         remote_src: true
+    - name: Unarchive prometheus-server tarball
+      become: true
+      unarchive:
+        src: /home/{{ ansible_env.USER }}/prometheus-server.tar.gz
+        dest: /opt/src/prometheus-server
+        remote_src: true
+    - name: Create prometheus symbolic link
+      become: true
+      file:
+        src: /opt/src/prometheus-server/prometheus-{{ prometheus_version }}.linux-amd64/prometheus
+        dest: /opt/src/prometheus-server/prometheus
+        state: link
     - name: Copy https-benchmark-server Unit file
       become: true
       copy:
         src: ./config/https-benchmark-server.service
         dest: /usr/lib/systemd/system/
         mode: 0644
+    - name: Copy Prometheus server Unit file
+      become: true
+      copy:
+        src: ./config/prometheus.service
+        dest: /usr/lib/systemd/system/
+        mode: 0644
+    - name: Copy Prometheus config file
+      become: true
+      copy:
+        src: ./config/prometheus-config.yml
+        dest: /opt/src/prometheus-server/prometheus.yml
+        mode: 0644
     - name: start https-benchmark-server as simple service
       become: yes
       systemd:
         name: https-benchmark-server
+        state: started
+        daemon_reload: yes
+        enabled: true
+    - name: start prometheus-server as simple service
+      become: yes
+      systemd:
+        name: prometheus
         state: started
         daemon_reload: yes
         enabled: true
