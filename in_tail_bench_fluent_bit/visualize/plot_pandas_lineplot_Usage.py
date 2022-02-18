@@ -20,7 +20,7 @@ args = parser.parse_args()
 
 if args.resource == 'cpu':
     resource_key_format = "CPU Usage(%)[{0}#0]"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 150
     fig_title = 'CPU Usage (Fluent Bit Process)'
@@ -28,7 +28,7 @@ if args.resource == 'cpu':
     divide_base = -1
 elif args.resource == 'rss':
     resource_key_format = "RSS(MB)[{0}#0]"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'RSS Usage (MB) '
     ylimit = 500
     fig_title = 'RSS Usage (Fluent Bit Process)'
@@ -36,7 +36,7 @@ elif args.resource == 'rss':
     divide_base = -1
 elif args.resource == 'vms':
     resource_key_format = "VMS(MB)[{0}#0]"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
     fig_title = 'VMS Usage (Fluent Bit Process)'
@@ -44,7 +44,7 @@ elif args.resource == 'vms':
     divide_base = -1
 elif args.resource == 'read_bytes':
     resource_key_format = "read bytes(KiB/sec)"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'Disk Read Usage (bytes)'
     ylimit = 10000
     fig_title = 'Disk Read Usage'
@@ -52,7 +52,7 @@ elif args.resource == 'read_bytes':
     divide_base = -1
 elif args.resource == 'write_bytes':
     resource_key_format = "write bytes(KiB/sec)"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'Disk Write Usage (KiB)'
     ylimit = 30000
     fig_title = 'Disk Write Usage'
@@ -60,7 +60,7 @@ elif args.resource == 'write_bytes':
     divide_base = -1
 elif args.resource == 'recv_bytes':
     resource_key_format = "recv bytes(/sec)"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'Receive Usage (Bytes)'
     ylimit = 50000
     fig_title = 'Receive Bytes Usage'
@@ -68,7 +68,7 @@ elif args.resource == 'recv_bytes':
     divide_base = -1
 elif args.resource == 'send_bytes':
     resource_key_format = "send bytes(/sec)"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'Send Usage (Bytes)'
     ylimit = 1500000
     fig_title = 'Send Bytes Usage'
