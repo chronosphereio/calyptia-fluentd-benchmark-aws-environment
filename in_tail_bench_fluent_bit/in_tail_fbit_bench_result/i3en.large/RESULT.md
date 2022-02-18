@@ -100,6 +100,39 @@ CPU usages correspond to flow rate.
    * Fluent Bit's CPU usage is corresponding to flow rate, but slightly reduced CPU usage in high loaded case (tailing 300000 lines/sec). This might be indicated that 300000 lines / sec case is saturated for processing.
    * Fluent Bit's memory foot print is almost lower than 300MB event if highly loaded case. Median of memory usage is around 100 MB.
 
+### Flow rate with Prometheus graphs
+
+### 0 lines/sec (baseline)
+
+![](Fluent-Bit-0-lines-per-sec.png)
+
+There is no sent records.
+
+### 5000 lines/sec (baseline)
+
+![](Fluent-Bit-5000-lines-per-sec.png)
+
+Around 35M records are sent per 1 monutes.
+
+### 10000 lines/sec (baseline)
+
+![](Fluent-Bit-10000-lines-per-sec.png)
+
+Around 40M records are sent per 1 monutes.
+
+### 100000 lines/sec (baseline)
+
+![](Fluent-Bit-100000-lines-per-sec.png)
+
+Around 35M records are sent per 1 monutes.
+Maybe performace throttling has begun?
+
+### 300000 lines/sec (baseline)
+
+![](Fluent-Bit-300000-lines-per-sec.png)
+
+Measuring records is not working correctly.
+Performace degredation has started.
 
 ### Appendix
 
