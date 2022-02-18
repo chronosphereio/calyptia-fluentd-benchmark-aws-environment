@@ -86,7 +86,7 @@ CPU usages correspond to flow rate.
 
 #### CPU usage / Core numbers
 
-![Compare with CPU usage / Core numbers](LinePlot-CPU_usage-per-core-numbers.png)
+![Compare with CPU usage / Core numbers](LinePlot-CPU_usage-per-core-number.png)
 
 CPU usages correspond to flow rate.
 300000 lines / sec seems to be saturated for processing?
