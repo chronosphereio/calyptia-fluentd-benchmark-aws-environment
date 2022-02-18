@@ -78,6 +78,23 @@ Received HTTP requests with https-benchmark-server (included binary tarball).
 CPU usages correspond to flow rate.
 300000 lines / sec seems to be saturated for processing?
 
+100 indicates that 1 core is fully used.
+
+#### CPU usage / Core numbers
+
+![Compare with CPU usage / Core numbers](LinePlot-CPU_usage-per-core-numbers.png)
+
+CPU usages correspond to flow rate.
+300000 lines / sec seems to be saturated for processing?
+
+This graph uses the values:
+
+CPU usages / Core numbers.
+
+If the collector instance has 2 Cores, 16 times lower than the previous graph.
+
+Total is 100.
+
 #### RSS usage
 
 ![Compare with RSS](LinePlot-RSS_usage.png)
@@ -100,6 +117,43 @@ CPU usages correspond to flow rate.
    * Fluent Bit's CPU usage is corresponding to flow rate, but slightly reduced CPU usage in high loaded case (tailing 300000 lines/sec). This might be indicated that 300000 lines / sec case is saturated for processing.
    * Fluent Bit's memory foot print is almost lower than 300MB event if highly loaded case. Median of memory usage is around 100 MB.
 
+### Flow rate with Prometheus graphs
+
+These metrics are collected on aggregator instance.
+
+And Prometheus is working on the aggregator instance.
+
+### 0 lines/sec (baseline)
+
+![](Fluent-Bit-0-lines-per-sec.png)
+
+There is no sent records.
+
+### 5000 lines/sec (baseline)
+
+![](Fluent-Bit-5000-lines-per-sec.png)
+
+Around 35M records are sent per 1 monutes.
+
+### 10000 lines/sec (baseline)
+
+![](Fluent-Bit-10000-lines-per-sec.png)
+
+Around 40M records are sent per 1 monutes.
+
+### 100000 lines/sec (baseline)
+
+![](Fluent-Bit-100000-lines-per-sec.png)
+
+Around 35M records are sent per 1 monutes.
+Maybe performace throttling has begun?
+
+### 300000 lines/sec (baseline)
+
+![](Fluent-Bit-300000-lines-per-sec.png)
+
+Measuring records is not working correctly.
+Performace degredation has started.
 
 ### Appendix
 

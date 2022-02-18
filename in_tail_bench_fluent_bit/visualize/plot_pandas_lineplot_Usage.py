@@ -12,7 +12,7 @@ from ansible.inventory.manager import InventoryManager
 
 parser = argparse.ArgumentParser(description='Visualize data as plot')
 parser.add_argument('--resource',
-                    choices=['cpu', 'rss', 'vms',
+                    choices=['cpu', 'cpu-total', 'rss', 'vms',
                              'read_bytes', 'write_bytes',
                              'recv_bytes', 'send_bytes'],
                     default='cpu')
@@ -20,15 +20,23 @@ args = parser.parse_args()
 
 if args.resource == 'cpu':
     resource_key_format = "CPU Usage(%)[{0}#0]"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'CPU Usage (%)'
     ylimit = 150
     fig_title = 'CPU Usage (Fluent Bit Process)'
     fig_name = 'LinePlot-CPU_usage.png'
     divide_base = -1
+elif args.resource == 'cpu-total':
+    resource_key_format = "CPU Usage(%)[{0}#0]"
+    xlabel_message = 'seconds'
+    ylabel_message = 'CPU Usage (%) / Core number'
+    ylimit = 100
+    fig_title = 'CPU Usage (Fluent Bit Process)'
+    fig_name = 'LinePlot-CPU_usage-per-core-number.png'
+    divide_base = -1
 elif args.resource == 'rss':
     resource_key_format = "RSS(MB)[{0}#0]"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'RSS Usage (MB) '
     ylimit = 500
     fig_title = 'RSS Usage (Fluent Bit Process)'
@@ -36,7 +44,7 @@ elif args.resource == 'rss':
     divide_base = -1
 elif args.resource == 'vms':
     resource_key_format = "VMS(MB)[{0}#0]"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'VMS Usage (MB)'
     ylimit = 1200
     fig_title = 'VMS Usage (Fluent Bit Process)'
@@ -44,7 +52,7 @@ elif args.resource == 'vms':
     divide_base = -1
 elif args.resource == 'read_bytes':
     resource_key_format = "read bytes(KiB/sec)"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'Disk Read Usage (bytes)'
     ylimit = 10000
     fig_title = 'Disk Read Usage'
@@ -52,7 +60,7 @@ elif args.resource == 'read_bytes':
     divide_base = -1
 elif args.resource == 'write_bytes':
     resource_key_format = "write bytes(KiB/sec)"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'Disk Write Usage (KiB)'
     ylimit = 30000
     fig_title = 'Disk Write Usage'
@@ -60,7 +68,7 @@ elif args.resource == 'write_bytes':
     divide_base = -1
 elif args.resource == 'recv_bytes':
     resource_key_format = "recv bytes(/sec)"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'Receive Usage (Bytes)'
     ylimit = 50000
     fig_title = 'Receive Bytes Usage'
@@ -68,7 +76,7 @@ elif args.resource == 'recv_bytes':
     divide_base = -1
 elif args.resource == 'send_bytes':
     resource_key_format = "send bytes(/sec)"
-    xlabel_message = 'steps'
+    xlabel_message = 'seconds'
     ylabel_message = 'Send Usage (Bytes)'
     ylimit = 1500000
     fig_title = 'Send Bytes Usage'
@@ -95,6 +103,17 @@ if environment == "rhel":
 else:
     username = "rocky"
 
+if args.resource == 'cpu-total':
+    instance_type = tfvars["instance_type"].strip(" \"\n")
+    if instance_type == "t2.medium":
+        instance_cpus = 2
+    elif instance_type == "i3en.large":
+        instance_cpus = 2
+    elif instance_type == "i3en.2xlarge":
+        instance_cpus = 8
+
+    divide_base = instance_cpus
+
 print(collector)
 
 sns.set()
@@ -118,7 +137,7 @@ df = pd.DataFrame({
     "300000 lines/sec w/ fluent-bit": rate_300000[resource_key_format.format("td-agent-bit".title())],
 })
 if divide_base > 1:
-    df = df_td.divide(divide_base)
+    df = df.divide(divide_base)
 
 fig, ax = plt.subplots(figsize=(8, 6))
 ax.set_title(fig_title)
